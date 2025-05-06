@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resolver Sistema de Ecuaciones</title>
+</head>
+<body>
+    <h1>Resolución de Sistema de Ecuaciones Lineales</h1>
+
+    <form method="post">
+        <label>Número de incógnitas:</label>
+        <input type="number" name="num_incognitas" value="2" required><br><br>
+
+        <label>Coeficientes de cada ecuación (separados por espacios):</label><br>
+        <input type="text" name="fila_0" placeholder="Ej: 2 1" required><br>
+        <input type="text" name="fila_1" placeholder="Ej: 1 -1" required><br><br>
+
+        <label>Términos independientes (separados por espacios):</label><br>
+        <input type="text" name="independientes" placeholder="Ej: 5 1" required><br><br>
+
+        <input type="submit" value="Resolver">
+    </form>
+
+    {% if resultado %}
+        <h2>Resultado:</h2>
+        <ul>
+            {% for r in resultado %}
+                <li>{{ r }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
