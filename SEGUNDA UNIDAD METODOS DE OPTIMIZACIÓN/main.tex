@@ -37,12 +37,11 @@
 \twocolumn[
 \begin{@twocolumnfalse}
 \begin{center}
-{\LARGE \textbf{Optimización de Precios en Servicios de Ride-Sharing mediante Técnicas Metaheurísticas: Aplicación del Algoritmo Simulated Annealing}}
+{\LARGE \textbf{Optimización de Precios en Servicios de Viaje-Compartido mediante  el Algoritmo Simulated Annealing}}
 \vspace{0.5cm}
 
 {\large Autor: Nestor Ademir Ruelas Yana}\\
 {\large 75670692@est.unap.edu.pe}\\
-{\large \url{https://github.com/123ademir/metodos_de_optimizacion}}
 \end{center}
 \vspace{1cm}
 \end{@twocolumnfalse}
@@ -54,13 +53,16 @@
 
 \section{RESUMEN}
 
-Este estudio investigó la aplicación del algoritmo metaheurístico Simulated Annealing para la optimización de precios dinámicos en servicios de ride-sharing utilizando datos de Uber y Lyft en Boston, Massachusetts. Se analizó un conjunto de datos que contenía información sobre tarifas, distancias, condiciones climáticas y patrones de demanda para identificar estrategias óptimas de precios. La metodología incluyó el preprocesamiento de 693,071 registros de viajes, la implementación del algoritmo Simulated Annealing con parámetros optimizados, y la evaluación mediante métricas de rendimiento como función objetivo, tiempo de convergencia y calidad de solución. Los resultados mostraron que el algoritmo logró reducir el costo total del sistema en un 18.3\% comparado con estrategias de precios tradicionales, mejorando la eficiencia operacional y la satisfacción del usuario. Las conclusiones indicaron que las técnicas metaheurísticas representan una herramienta efectiva para la optimización de precios dinámicos en plataformas de transporte compartido, proporcionando ventajas competitivas significativas en mercados de alta demanda.
+Este estudio investigó la aplicación del algoritmo Simulated Annealing para la optimización de precios dinámicos en servicios de viaje-compartido
+ utilizando datos de Uber y Lyft en Boston, Massachusetts. Se analizó un conjunto de datos que contenía información sobre tarifas, distancias, condiciones climáticas y patrones de demanda para identificar estrategias óptimas de precios. La metodología incluyó , la implementación del algoritmo Simulated Annealing con parámetros optimizados, y la evaluación mediante métricas de rendimiento como función objetivo, tiempo de convergencia y calidad de solución. Los resultados mostraron que el algoritmo logró reducir el costo total del sistema en un 18.3\% comparado con estrategias de precios tradicionales, mejorando la eficiencia operacional y la satisfacción del usuario. Las conclusiones indicaron que las técnicas metaheurísticas representan una herramienta efectiva para la optimización de precios dinámicos en plataformas de transporte compartido, proporcionando ventajas competitivas significativas en mercados de alta demanda.
 
 \section{INTRODUCCIÓN}
 
-El crecimiento exponencial de las plataformas de ride-sharing ha transformado fundamentalmente el paisaje del transporte urbano, creando nuevos desafíos en la optimización de precios dinámicos [1,2]. La determinación eficiente de tarifas en tiempo real representa un problema complejo de optimización multiobjetivo que debe considerar variables como demanda fluctuante, disponibilidad de conductores, condiciones de tráfico y factores ambientales [3]. Los sistemas tradicionales de precios fijos resultan inadecuados para responder a la dinámica del mercado, generando ineficiencias operacionales y pérdidas económicas tanto para plataformas como para usuarios [4].
+El crecimiento exponencial de las plataformas de viaje compartido
+ ha transformado fundamentalmente el paisaje del transporte urbano, creando nuevos desafíos en la optimización de precios dinámicos [1,2]. La determinación eficiente de tarifas en tiempo real representa un problema complejo de optimización multiobjetivo que debe considerar variables como demanda fluctuante, disponibilidad de conductores, condiciones de tráfico y factores ambientales [3]. Los sistemas tradicionales de precios fijos resultan inadecuados para responder a la dinámica del mercado, generando ineficiencias operacionales y pérdidas económicas tanto para plataformas como para usuarios [4].
 
-Las investigaciones previas en optimización de precios para ride-sharing se han enfocado principalmente en modelos económicos teóricos y algoritmos de programación lineal [5,6]. Sin embargo, estos enfoques presentan limitaciones significativas al abordar la complejidad computacional y la naturaleza no lineal del problema. Los métodos tradicionales de optimización frecuentemente se encuentran atrapados en óptimos locales, especialmente cuando se enfrentan a espacios de búsqueda de alta dimensionalidad [7]. Además, estudios recientes han identificado la necesidad de desarrollar estrategias de optimización más robustas que puedan adaptarse a condiciones dinámicas del mercado [8,9].
+Las investigaciones previas en optimización de precios para viaje-compartido
+ se han enfocado principalmente en modelos económicos teóricos y algoritmos de programación lineal [5,6]. Sin embargo, estos enfoques presentan limitaciones significativas al abordar la complejidad computacional y la naturaleza no lineal del problema. Los métodos tradicionales de optimización frecuentemente se encuentran atrapados en óptimos locales, especialmente cuando se enfrentan a espacios de búsqueda de alta dimensionalidad [7]. Además, estudios recientes han identificado la necesidad de desarrollar estrategias de optimización más robustas que puedan adaptarse a condiciones dinámicas del mercado [8,9].
 
 Las técnicas metaheurísticas han emergido como alternativas prometedoras para resolver problemas de optimización complejos en el dominio del transporte [10,11]. Particularmente, el algoritmo Simulated Annealing ha demostrado capacidades superiores para escapar de óptimos locales y encontrar soluciones de alta calidad en espacios de búsqueda complejos [12]. A pesar de estas ventajas potenciales, existe una brecha significativa en la literatura respecto a la aplicación específica de metaheurísticas para optimización de precios en ride-sharing utilizando datos reales de plataformas comerciales.
 
@@ -68,15 +70,15 @@ El objetivo principal de este estudio fue implementar y evaluar el algoritmo Sim
 
 \section{MARCO TEÓRICO}
 
-Fundamentos de la Optimización Metaheurística las técnicas metaheurísticas constituyen una familia de algoritmos de optimización inspirados en fenómenos naturales, diseñados para resolver problemas complejos donde los métodos exactos resultan computacionalmente prohibitivos [13]. Estos algoritmos se caracterizan por su capacidad de explorar eficientemente espacios de búsqueda extensos, balanceando la exploración de nuevas regiones con la explotación de soluciones prometedoras [14]. La naturaleza estocástica de las metaheurísticas les permite escapar de óptimos locales, una ventaja crucial al abordar problemas de optimización no convexos como la determinación de precios dinámicos.
+Las técnicas metaheurísticas constituyen una familia de algoritmos de optimización inspirados en fenómenos naturales, diseñados para resolver problemas complejos donde los métodos exactos resultan computacionalmente prohibitivos [13]. Estos algoritmos se caracterizan por su capacidad de explorar eficientemente espacios de búsqueda extensos, balanceando la exploración de nuevas regiones con la explotación de soluciones prometedoras [14]. La naturaleza estocásticas les permite escapar de óptimos locales, una ventaja crucial al abordar problemas de optimización no convexos como la determinación de precios dinámicos.
 
-El algoritmo Simulated Annealing, propuesto por Kirkpatrick et al. (1983), representa una técnica metaheurística basada en el proceso físico de recocido metalúrgico [15]. El fundamento teórico del algoritmo se basa en la analogía con el enfriamiento controlado de metales, donde el sistema gradualmente reduce su temperatura para alcanzar un estado de energía mínima. Matemáticamente, el algoritmo utiliza la función de probabilidad de Boltzmann: $P(\Delta E) = \exp(-\Delta E/T)$, donde $\Delta E$ representa el cambio en la función objetivo y $T$ la temperatura del sistema. Esta función permite aceptar soluciones inferiores con probabilidad decreciente conforme disminuye la temperatura, facilitando la exploración del espacio de búsqueda.
+El algoritmo Simulated Annealing, representa una técnica basada en el proceso físico de recocido metalúrgico [15]. El fundamento teórico del algoritmo se basa en la analogía con el enfriamiento controlado de metales, donde el sistema gradualmente reduce su temperatura para alcanzar un estado de energía mínima. Matemáticamente, el algoritmo utiliza la función de probabilidad de Boltzmann: $P(\Delta E) = \exp(-\Delta E/T)$, donde $\Delta E$ representa el cambio en la función objetivo y $T$ la temperatura del sistema. Esta función permite aceptar soluciones inferiores con probabilidad decreciente conforme disminuye la temperatura, facilitando la exploración del espacio de búsqueda.
 
-Optimización de Precios en Ride-Sharing la optimización de precios en plataformas de ride-sharing constituye un problema de optimización multimodal caracterizado por múltiples variables interdependientes [16]. Los modelos de precios dinámicos deben considerar factores como elasticidad de la demanda, disponibilidad de la oferta, patrones temporales y geográficos, y condiciones externas como clima y eventos especiales [17]. La función objetivo típicamente busca maximizar el beneficio total del sistema, que incluye ingresos de la plataforma, utilidad de conductores y satisfacción de pasajeros.
+Optimización de Precios en viaje compartido la optimización de precios en plataformas de viaje compartido constituye un problema de optimización multimodal caracterizado por múltiples variables interdependientes [16]. Los modelos de precios dinámicos deben considerar factores como elasticidad de la demanda, disponibilidad de la oferta, patrones temporales y geográficos, y condiciones externas como clima y eventos especiales [17]. La función objetivo típicamente busca maximizar el beneficio total del sistema, que incluye ingresos de la plataforma, utilidad de conductores y satisfacción de pasajeros.
 
 La complejidad del problema se incrementa debido a la naturaleza no lineal de las relaciones entre variables. La demanda de servicios de transporte exhibe patrones complejos influenciados por factores socioeconómicos, temporales y ambientales [18]. Simultáneamente, la oferta de conductores responde dinámicamente a incentivos económicos y condiciones operacionales. Esta interdependencia crea un sistema dinámico donde pequeños cambios en precios pueden generar efectos significativos en el equilibrio del mercado.
 
-Aplicaciones de Metaheurísticas en Transporte las técnicas metaheurísticas han encontrado aplicaciones exitosas en diversos problemas de optimización en el sector transporte [19,20]. Los algoritmos genéticos han sido aplicados para optimización de rutas de vehículos, mientras que particle swarm optimization ha demostrado eficacia en problemas de planificación de horarios [21]. El algoritmo Simulated Annealing específicamente ha mostrado resultados prometedores en problemas de location-routing y asignación de recursos en sistemas de transporte [22].
+Aplicaciones de Metaheurísticas en Transporte las técnicas han encontrado aplicaciones exitosas en diversos problemas de optimización en el sector transporte [19,20]. Los algoritmos genéticos han sido aplicados para optimización de rutas de vehículos, mientras que particle swarm optimization ha demostrado eficacia en problemas de planificación de horarios [21]. El algoritmo Simulated Annealing específicamente ha mostrado resultados prometedores en problemas de location-routing y asignación de recursos en sistemas de transporte [22].
 
 La literatura reciente ha explorado la aplicación de metaheurísticas híbridas que combinan múltiples técnicas para mejorar el rendimiento en problemas específicos de transporte [23]. Estos enfoques aprovechan las fortalezas complementarias de diferentes algoritmos, logrando convergencia más rápida y soluciones de mayor calidad. Sin embargo, la aplicación específica a optimización de precios en ride-sharing permanece como un área de investigación emergente con potencial significativo para contribuciones innovadoras.
 
@@ -86,13 +88,16 @@ En el contexto específico de optimización de precios, las métricas deben refl
 
 \section{METODOLOGÍA}
 
-Conjunto de Datos el estudio utilizó el dataset Uber \& Lyft Cab Prices Dataset'' \url{https://www.kaggle.com/datasets/ravi72munde/uber-lyft-cab-prices} disponible en Kaggle, que contiene información detallada sobre servicios de ride-sharing en Boston, Massachusetts [26]. El conjunto de datos original comprendía 693,071 registros de viajes recolectados durante noviembre y diciembre de 2018, incluyendo variables como precio de viaje, distancia, duración, tipo de servicio, condiciones climáticas, y coordenadas geográficas de origen y destino. La información fue obtenida mediante web scraping de las APIs públicas de Uber y Lyft, proporcionando una representación realista de las operaciones de ride-sharing en un entorno urbano denso.
+Conjunto de Datos el estudio utilizó el dataset Uber \& Lyft Cab Prices Dataset'' disponible en Kaggle, que contiene información detallada sobre servicios de ride-sharing en Boston, Massachusetts [26]. El conjunto de datos original comprendía 693,071 registros de viajes recolectados durante noviembre y diciembre de 2018, incluyendo variables como precio de viaje, distancia, duración, tipo de servicio, condiciones climáticas, y coordenadas geográficas de origen y destino. La información fue obtenida mediante web scraping de las APIs públicas de Uber y Lyft, proporcionando una representación realista de las operaciones de ride-sharing en un entorno urbano denso.
 
 Preprocesamiento de Datos el proceso de preprocesamiento siguió un protocolo sistemático para garantizar la calidad y consistencia de los datos. Inicialmente se realizó un análisis exploratorio para identificar valores faltantes, outliers, y inconsistencias en los registros. Se eliminaron 47,328 registros con valores faltantes en variables críticas como precio, distancia, o coordenadas geográficas. Los outliers fueron identificados utilizando el método de rango intercuartílico (IQR) y se removieron 23,156 registros que excedían 3 desviaciones estándar de la media en variables de precio y distancia.
 
 La estandarización de variables numéricas se aplicó utilizando z-score normalization para variables continuas como precio, distancia, y duración. Las variables categóricas como tipo de servicio y condiciones climáticas fueron codificadas mediante one-hot encoding. Se crearon variables derivadas incluyendo precio por milla, hora del día categórica, y día de la semana para capturar patrones temporales relevantes. La segmentación geográfica se implementó dividiendo el área de Boston en grids de 0.01 grados de latitud y longitud para análisis espacial detallado.
 
-Implementación del Algoritmo Simulated Annealing la implementación del algoritmo Simulated Annealing siguió la estructura clásica con adaptaciones específicas para el problema de optimización de precios. La función objetivo se definió como la maximización del beneficio total del sistema, considerando ingresos de la plataforma, costos operacionales, y penalizaciones por tiempos de espera excesivos. La formulación matemática incluyó: $F(x) = \sum(\text{precio\_viaje} \times \text{demanda\_satisfecha}) - \sum(\text{costos\_operacionales}) - \lambda \times \sum(\text{penalizaciones\_tiempo\_espera})$, donde $\lambda$ representa el peso de la penalización por tiempo de espera.
+Implementación del Algoritmo Simulated Annealing la implementación del algoritmo Simulated Annealing siguió la estructura clásica con adaptaciones específicas para el problema de optimización de precios. La función objetivo se definió como la maximización del beneficio total del sistema, considerando ingresos de la plataforma, costos operacionales, y penalizaciones por tiempos de espera excesivos. La formulación matemática incluyó: 
+$F(x) = \sum(\text{precio\_viaje} \times \text{demanda\_satisfecha}) - \sum(\text{costos\_operacionales}) - \lambda \times \sum(\text{penalizaciones\_tiempo\_espera})$
+donde:
+$\lambda$: representa el peso de la penalización por tiempo de espera.
 
 Los parámetros del algoritmo se configuraron mediante experimentación sistemática. La temperatura inicial se estableció en $T_0 = 1000$, determinada mediante análisis de la dispersión de la función objetivo. El esquema de enfriamiento siguió un cronograma geométrico con factor de reducción $\alpha = 0.95$, aplicado cada 100 iteraciones. El criterio de parada se definió como temperatura final $T_f = 0.01$ o máximo de 10,000 iteraciones. La generación de soluciones vecinas se implementó mediante perturbaciones aleatorias en los precios base, con magnitud proporcional a la temperatura actual para mantener el balance exploración-explotación.
 
@@ -211,13 +216,6 @@ Las limitaciones del estudio incluyen la dependencia en datos históricos de un 
 Las líneas de investigación futura incluyen el desarrollo de algoritmos híbridos que combinen Simulated Annealing con otras metaheurísticas, la incorporación de consideraciones de equidad social en la función objetivo, y la exploración de optimización multi-nivel que considere simultáneamente precios, asignación de conductores, y planificación de rutas. Estas extensiones podrían abordar desafíos emergentes en la industria del ride-sharing, incluyendo integración con transporte público, servicios autónomos, y objetivos de sostenibilidad ambiental.
 
 \section{REFERENCIAS}
-\begin{thebibliography}{9}
-
-\bibitem{ref1}
-Apellido, N. (Año). \textit{Título del artículo}. Revista, volumen(número), páginas.
-\href{https://doi.org/10.1234/abcd.efgh}{https://doi.org/10.1234/abcd.efgh}
-
-\end{thebibliography}
 
 
 [1] Chen, M., \& Liu, Y. (2023). Dynamic pricing strategies in ride-sharing platforms: A comprehensive review. \textit{Transportation Research Part E: Logistics and Transportation Review}, 171, 103045. \url{https://doi.org/10.1016/j.tre.2023.103045}
@@ -272,7 +270,8 @@ Apellido, N. (Año). \textit{Título del artículo}. Revista, volumen(número), 
 
 [26] Ravi, B. (2018). Uber & Lyft Cab Prices Dataset. Kaggle. Retrieved from
 \section{REPOSITORIO}
-
+el código y los materiales para poder replicar el proyecto se encuentra en:
+\url{https://github.com/123ademir/metodos_de_optimizacion}
 
 
 \end{document}
