@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimización Lineal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .math-formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            color: white;
+            animation: slideIn 0.5s ease;
+        }
+
+        .result h2 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .result p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .result strong {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .constraints {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #28a745;
+        }
+
+        .constraints h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .constraints ul {
+            color: #666;
+            font-size: 14px;
+            margin-left: 20px;
+        }
+
+        .constraints li {
+            margin-bottom: 5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Optimización Lineal</h1>
+        
+        <div class="math-formula">
+            <strong>Maximizar: z = a·x + b·y</strong>
+        </div>
+
+        <div class="constraints">
+            <h3>Restricciones:</h3>
+            <ul>
+                <li>x ≥ 0</li>
+                <li>y ≥ 0</li>
+                <li>x ≤ x_max</li>
+                <li>y ≤ y_max</li>
+                <li>x + y ≤ c</li>
+            </ul>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="a">Coeficiente a (de x):</label>
+                <input type="number" id="a" name="a" step="any" required>
+                <div class="input-hint">Valor del coeficiente de x en la función objetivo</div>
+            </div>
+
+            <div class="form-group">
+                <label for="b">Coeficiente b (de y):</label>
+                <input type="number" id="b" name="b" step="any" required>
+                <div class="input-hint">Valor del coeficiente de y en la función objetivo</div>
+            </div>
+
+            <div class="form-group">
+                <label for="c">Constante c (para x + y ≤ c):</label>
+                <input type="number" id="c" name="c" step="any" required>
+                <div class="input-hint">Límite superior para la suma de x e y</div>
+            </div>
+
+            <div class="form-group">
+                <label for="x_max">Límite máximo de x:</label>
+                <input type="number" id="x_max" name="x_max" step="any" required>
+                <div class="input-hint">Valor máximo que puede tomar x</div>
+            </div>
+
+            <div class="form-group">
+                <label for="y_max">Límite máximo de y:</label>
+                <input type="number" id="y_max" name="y_max" step="any" required>
+                <div class="input-hint">Valor máximo que puede tomar y</div>
+            </div>
+
+            <button type="submit">🔍 Calcular Óptimo</button>
+        </form>
+
+        {% if z_max %}
+            <div class="result">
+                <h2>🎯 Resultado Óptimo</h2>
+                <p>Valor máximo de z: <strong>{{ "%.4f"|format(z_max) }}</strong></p>
+                <p>Punto óptimo: <strong>({{ "%.4f"|format(punto[0]) }}, {{ "%.4f"|format(punto[1]) }})</strong></p>
+                <p>Coordenadas: x = {{ "%.4f"|format(punto[0]) }}, y = {{ "%.4f"|format(punto[1]) }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

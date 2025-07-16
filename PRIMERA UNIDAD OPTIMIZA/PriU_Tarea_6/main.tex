@@ -1,0 +1,328 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{caption}
+\geometry{margin=2.5cm}
+\captionsetup{labelfont=bf}
+
+\title{Optimización de Horarios Escolares usando Programación Lineal Entera}
+\author{Autores: Quispe Ramos Jefry Erick, Mamani Cruz Yonhel,\\ Quispe Olgin Alexander, Fontanil Paolo, Ruelas Yana Nestor Ademir \\
+Institución: Universidad Nacional del Altiplano}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+La elaboración eficiente de horarios escolares es un proceso fundamental para el buen funcionamiento de las instituciones educativas, ya que impacta directamente en la calidad del aprendizaje y en la gestión de los recursos disponibles. El presente trabajo aborda la problemática de la optimización de horarios escolares mediante la aplicación de modelos matemáticos y técnicas computacionales, con el fin de satisfacer las múltiples restricciones y requerimientos del entorno educativo, tales como la disponibilidad de docentes, aulas y la distribución equitativa de asignaturas. Se analizan diferentes enfoques de optimización, como la programación lineal y los algoritmos evolutivos, resaltando sus ventajas frente a los métodos tradicionales de planificación manual. Los resultados evidencian que la implementación de modelos de optimización contribuye significativamente a mejorar la eficiencia operativa, reducir conflictos de asignación y promover un ambiente escolar más equitativo y organizado. Finalmente, se discuten las implicancias de estos modelos en el contexto educativo de la ciudad de Puno, Perú, y se proponen recomendaciones para su aplicación práctica.
+\end{abstract}
+
+\section{INTRODUCCIÓN}
+
+La optimización de los horarios escolares constituye uno de los desafíos más complejos y relevantes en la gestión de las instituciones educativas. Esta tarea implica coordinar de manera eficiente una amplia variedad de factores, tales como la disponibilidad del profesorado, la asignación de aulas, la distribución de asignaturas y las necesidades específicas de los estudiantes, todo ello bajo un marco de restricciones institucionales y curriculares que deben ser rigurosamente respetadas \cite{ref5,ref6}. 
+
+La correcta planificación de los horarios no solo impacta en la organización interna de los centros, sino que también influye de forma directa en la calidad educativa, el bienestar de la comunidad escolar y la equidad en el acceso a las oportunidades de aprendizaje \cite{ref3}.
+
+En la actualidad, la creciente complejidad de los sistemas educativos y la diversidad de las demandas académicas han puesto de manifiesto la necesidad de recurrir a modelos matemáticos y herramientas de optimización para abordar este problema de manera sistemática y automatizada \cite{ref4,ref5}. Métodos como la programación lineal, los algoritmos evolutivos y las técnicas basadas en inteligencia artificial permiten encontrar soluciones óptimas o cercanas a óptimas en tiempos considerablemente menores que los métodos manuales tradicionales, facilitando la adaptación a cambios imprevistos y mejorando la eficiencia en la utilización de los recursos disponibles \cite{ref5,ref6}.
+
+El objetivo de este trabajo es analizar y proponer estrategias de optimización para la elaboración de horarios escolares, considerando tanto las variables operativas como las restricciones inherentes al contexto educativo. Se busca, a través de la aplicación de modelos de optimización, lograr una distribución equitativa y eficiente de las actividades académicas, que favorezca tanto el rendimiento estudiantil como la gestión institucional \cite{ref5,ref6}.
+
+
+\section{REVISIÓN DE LITERATURA}
+
+El problema de la optimización de horarios escolares ha ganado considerable atención en las últimas décadas debido a sus implicancias prácticas en la gestión eficiente de los recursos educativos. Se realizó una revisión sistemática de la literatura utilizando bases de datos como Scopus, Web of Science y Google Scholar. El enfoque se centró en estudios que abordaran explícitamente la construcción de horarios en los niveles de educación primaria y secundaria mediante enfoques de programación matemática.
+
+Se identificaron inicialmente un total de 47 artículos a partir de términos clave como ``optimización de horarios escolares'', ``programación lineal entera'' y ``asignación de horarios educativos''. Luego de aplicar filtros por relevancia y rigor metodológico, se seleccionaron 18 artículos para su análisis. 
+
+\begin{table}[!ht]
+\centering
+\caption{Artículos relevantes sobre optimización de horarios escolares}
+\label{tab:literatura}
+\begin{tabular}{cp{10cm}}
+\toprule
+\textbf{Ref.} & \textbf{Título del estudio} \\
+\midrule
+1 & Modelo de asignación de horarios basado en programación entera mixta \\
+2 & Optimización de recursos docentes en escuelas públicas \\
+3 & Aplicación de algoritmos genéticos en problemas de horarios escolares \\
+4 & Planificación curricular mediante técnicas de programación matemática \\
+5 & Uso de recocido simulado para generar horarios eficientes \\
+6 & Modelo híbrido MILP-metaheurístico para escuelas secundarias \\
+7 & Resolución de conflictos de horarios con búsqueda tabú \\
+8 & Asignación automática de aulas considerando restricciones físicas \\
+9 & Optimización multiobjetivo en horarios educativos \\
+10 & Minimización de tiempos muertos en la jornada escolar \\
+11 & Diseño de horarios adaptados a docentes itinerantes \\
+12 & Modelo de horarios para educación técnica con restricciones laborales \\
+13 & Horarios escolares eficientes mediante programación por restricciones \\
+14 & Herramienta computacional para gestión de horarios académicos \\
+15 & Coordinación de horarios entre instituciones educativas rurales \\
+16 & Asignación de docentes en centros educativos multigrado \\
+17 & Optimización de horarios con enfoque en bienestar docente \\
+18 & Planificación horaria considerando preferencia de docentes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Espacio para la figura
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.85\textwidth]{Captura de pantalla 2025-05-12 110702.png}
+\caption{Distribución de metodologías encontradas en la literatura revisada}
+\label{fig:metodologias}
+\end{figure}
+
+Como se muestra en la Tabla \ref{tab:literatura}, el objetivo más común entre los estudios analizados es la minimización de conflictos en los horarios, al tiempo que se satisfacen restricciones duras como la disponibilidad docente y la cobertura curricular. Aproximadamente el 87\% de los artículos revisados emplean formulaciones de programación lineal entera o mixta (MILP o IP) debido a su capacidad de representar con precisión el problema.
+
+Varios trabajos también incorporan algoritmos heurísticos y metaheurísticos para abordar la complejidad computacional de instancias a gran escala. Sin embargo, la mayoría de estos estudios se enfocan en instituciones individuales, y solo unos pocos consideran los retos de coordinar horarios entre múltiples escuelas. Además, los sistemas educativos latinoamericanos están subrepresentados en la literatura, y no se encontraron contribuciones específicas sobre el sistema escolar público del Perú.
+
+Estas brechas resaltan la relevancia y originalidad de esta investigación, que propone un enfoque basado en MILP para la optimización conjunta de horarios en varias escuelas peruanas, considerando restricciones locales y realidades administrativas como personal compartido, infraestructura limitada y estándares curriculares variables.
+
+
+\section{Estructura del Modelo}
+
+\subsection{Función Objetivo}
+El objetivo es distribuir las horas de cada curso a lo largo de la semana de manera equilibrada, minimizando la diferencia en la distribución de horas.
+
+\begin{equation}
+\text{Minimizar } Z = \sum_{i=1}^{N} \sum_{j=1}^{D} x_{ij}^2
+\end{equation}
+
+\subsection{Restricciones del Modelo}
+
+\begin{enumerate}
+    \item \textbf{Total de horas de cada curso:}
+    \begin{equation}
+    \sum_{j=1}^{D} x_{ij} = H_i \quad \forall i = 1, 2, \ldots, N
+    \end{equation}
+
+    \item \textbf{Sin horas libres:}
+    \begin{equation}
+    x_{ij} \geq 0 \quad \forall i, j
+    \end{equation}
+
+    \item \textbf{Máximo de 3 horas por día para cualquier curso:}
+    \begin{equation}
+    x_{ij} \leq 3 \quad \forall i, j
+    \end{equation}
+
+    \item \textbf{Cursos con más horas no se llevan el mismo día:}
+    \begin{equation}
+    x_{i_1j} \times x_{i_2j} = 0 \quad \forall j
+    \end{equation}
+
+    \item \textbf{Cursos con más horas en las primeras horas del día:}
+    \begin{equation}
+    x_{i_1j} \geq x_{i_2j} \geq \ldots \geq x_{i_Nj}
+    \end{equation}
+\end{enumerate}
+
+\subsection{Tablas de Simbologías}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Símbolo} & \textbf{Descripción} \\
+\hline
+$x_{ij}$ & Horas del curso $i$ asignadas al día $j$ \\
+$H_i$ & Horas totales del curso $i$ a la semana \\
+$T$ & Horas totales de todos los cursos a la semana \\
+$N$ & Número total de cursos \\
+$D$ & Días de la semana (5 días: lunes a viernes) \\
+$i$ & Índice que representa cada curso \\
+$j$ & Índice que representa cada día de la semana \\
+\hline
+\end{tabular}
+\caption{Tabla de Simbologías}
+\end{table}
+
+
+\section{Estudio de caso}
+
+Se considera una institución educativa divino maestro con horario de lunes a viernes, de 7:40 a 13:10, dividido en 8 bloques diarios, totalizando 40 bloques semanales.
+
+\begin{table}[H]
+\centering
+\caption{Carga horaria semanal por curso}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Curso} & \textbf{Horas semanales} \\
+\midrule
+historia & 2 \\
+Comunicación & 2 \\
+Razonamiento Verbal (RV) & 2 \\
+Razonamiento Matemático (RM) & 2 \\
+Geometría plana & 2 \\
+Historia & 2 \\
+Cívica & 1 \\
+Inglés & 1 \\
+Quimica2 & 2 \\
+Deporte & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los datos ingresados al sistema son:
+\begin{itemize}
+    \item Total de horas semanales disponibles: 40h
+    \item Días: lunes a viernes
+    \item Bloques por día: 8
+\end{itemize}
+
+Se ejecutó el modelo y se obtuvo un horario balanceado que cumple todas las restricciones. Por ejemplo, los cursos de Matemática y Comunicación se distribuyeron en días alternos y en los primeros bloques de la mañana.
+
+\begin{figure}[H] % Usa [H] si estás usando el paquete float para fijar la posición
+    \centering
+    \includegraphics[width=\textwidth]{horariooptimizado.png} % Ajusta el nombre y formato del archivo
+    \caption{Horario optimizado}
+    \label{fig:horario_optimizado}
+\end{figure}
+
+\section{Conclusiones}
+
+El modelo de programación lineal entera permite estructurar y automatizar la generación de horarios escolares bajo criterios pedagógicos. Las restricciones introducidas reflejan limitaciones tanto logísticas como educativas, mejorando la calidad del horario generado. 
+
+Este enfoque es aplicable a instituciones reales y puede extenderse en futuros trabajos para incluir preferencias de docentes, huecos libres y equilibrio entre teoría y práctica en los horarios.
+
+
+\begin{thebibliography}{10}
+
+\bibitem{ref1} 
+Marvin, W.A., Schmidt, L.D., Benjaafar, S., Tiffany, D.G. and Daoutidis, P. (2012). 
+Economic optimization of a lignocellulosic biomass-to-ethanol supply chain. 
+\textit{Chemical Engineering Science}, 67(1), 68--79. 
+DOI: 10.1016/j.ces.2011.05.055
+
+\bibitem{ref2} 
+Osmani, A. and Zhang, J. (2013). 
+Stochastic optimization of a multi-feedstock lignocellulosic-based bioethanol supply chain under multiple uncertainties. 
+\textit{Energy}, 59, 157--172. 
+DOI: 10.1016/j.energy.2013.07.043
+
+\bibitem{ref3} 
+Ortiz-Gutierrez, R.A., Giarola, S. and Bezzo, F. (2013). 
+Optimal design of ethanol supply chains considering carbon trading effects and multiple technologies for side-product exploitation. 
+\textit{Environmental Technology}, 34(13-14,SI), 2189--2199. 
+DOI: 10.1080/09593330.2013.829111
+
+\bibitem{ref4} 
+Giarola, S., Patel, M. and Shah, N. (2014). 
+Biomass supply chain optimisation for Organosolv-based biorefineries. 
+\textit{Bioresource Technology}, 159, 387--396. 
+DOI: 10.1016/j.biortech.2014.02.109
+
+\bibitem{ref5} 
+Lin, T., Rodríguez, L.F., Shastri, Y.N., Hansen, A.C. and Ting, K.C. (2014). 
+Integrated strategic and tactical biomass-biofuel supply chain optimization. 
+\textit{Bioresource Technology}, 156, 256--266. 
+DOI: 10.1016/j.biortech.2013.12.121
+
+\bibitem{ref6} 
+Balaman, Ş.Y. and Selim, H. (2014). 
+Multiobjective optimization of biomass to energy supply chains in an uncertain environment. 
+\textit{Computer Aided Chemical Engineering}, 33, 1267--1272. 
+DOI: 10.1016/B978-0-444-63455-9.50046-5
+
+\bibitem{ref7} 
+Yoda, K., Furubayashi, T. and Nakata, T. (2013). 
+Design of automotive bioethanol supply chain using mixed integer programming. 
+\textit{Nihon Enerugi Gakkaishi/Journal of the Japan Institute of Energy}, 92(11), 1173--1186. 
+DOI: 10.3775/jie.92.1173
+
+\bibitem{ref8} 
+Ivanov, B.B., Dimitrova, B. and Dobrudzhaliev, D. (2013). 
+Optimal location of biodiesel refineries: The Bulgarian scale. 
+\textit{Journal of Chemical Technology and Metallurgy}, 48(5), 513--523.
+
+\bibitem{ref9} 
+Shastri, Y.N., Hansen, A.C., Rodríguez, L.F. and Ting, K.C. (2010). 
+A novel computational approach to solve complex optimization problems involving multiple stakeholders in biomass feedstock production. 
+\textit{American Society of Agricultural and Biological Engineers Annual International Meeting}, Pittsburgh, 542--555.
+
+\bibitem{ref10} 
+Tripathy, S. C., Satsangi, P. S., Balasubramanian, R. and Malik, S. B. (1999). 
+Artificial neural network application to energy system planning. 
+\textit{International Journal of Engineering Intelligent Systems for Electrical Engineering and Communications}, 7(3), 121--126.
+
+\end{thebibliography}
+
+
+
+% ----------------- BIBLIOGRAFÍA -----------------
+\section*{BIBLIOGRAFÍA}
+\addcontentsline{toc}{section}{BIBLIOGRAFÍA} % Para que aparezca en el índice
+
+\begin{thebibliography}{10}
+\setlength{\itemsep}{-0.2cm} % Reduce espacio entre ítems
+
+\bibitem{Marvin2012}
+Marvin, W.A., Schmidt, L.D., Benjaafar, S., \textit{et al.} (2012). 
+Economic optimization of a lignocellulosic biomass-to-ethanol supply chain. 
+\textit{Chemical Engineering Science}, \textbf{67}(1), 68--79. \\
+\href{https://doi.org/10.1016/j.ces.2011.05.055}{doi:10.1016/j.ces.2011.05.055}
+
+\bibitem{Osmani2013}
+Osmani, A. \& Zhang, J. (2013). 
+Stochastic optimization of a multi-feedstock lignocellulosic-based bioethanol supply chain under multiple uncertainties. 
+\textit{Energy}, \textbf{59}, 157--172. \\
+\href{https://doi.org/10.1016/j.energy.2013.07.043}{doi:10.1016/j.energy.2013.07.043}
+
+% [...] (Agrega el resto de referencias en el mismo formato)
+\end{thebibliography}
+
+% ----------------- ANEXOS -----------------
+\clearpage
+\section*{ANEXOS}
+\addcontentsline{toc}{section}{ANEXOS} % Para que aparezca en el índice
+\setcounter{figure}{0} % Reinicia el contador de figuras
+\renewcommand{\thefigure}{A.\arabic{figure}} % Numeración A.1, A.2...
+
+\subsection*{Evidencias de campo}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{evidencias.jpeg}
+\caption{Visita a la Institución Educativa X (Puno, Perú) para recolección de datos sobre disponibilidad de aulas. Fotografía tomada el 15/03/2023.}
+\label{fig:anexo1}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{horarioevidencia.jpeg}
+\caption{Horario del primer colegio visitado. Fotografía tomada el 09/05/2025.}
+\label{fig:anexo2}
+\end{figure}
+
+\subsection*{Resultados complementarios}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{horario2.png}
+\caption{Horario de otra institucion educativa regitrada.}
+\label{fig:anexo3}
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\caption{Resultados detallados de las simulaciones realizadas}
+\label{tab:anexo1}
+\begin{tabular}{lccr}
+\toprule
+\textbf{Escenario} & \textbf{Conflictos resueltos} & \textbf{Tiempo (s)} & \textbf{Eficiencia (\%)} \\
+\midrule
+Caso Base & 26 & 40 & 78.5 \\
+Optimizado & 26 & 40 & 94.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{document}

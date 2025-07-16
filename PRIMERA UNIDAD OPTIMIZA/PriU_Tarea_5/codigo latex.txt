@@ -1,0 +1,105 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\geometry{margin=1in}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection.}{1em}{}
+
+\title{\textbf{Resumen – Aplicación de la Programación Lineal en la Planificación de Producción de una Empresa Metalmecánica}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción y contexto del problema}
+La investigación tiene como objetivo principal mejorar el proceso de planificación de la producción de una empresa metalmecánica utilizando herramientas de optimización, específicamente la programación lineal. La empresa objeto de estudio enfrenta dificultades en la distribución eficiente de los recursos disponibles para cumplir con la demanda de productos, lo cual afecta su rentabilidad y cumplimiento de pedidos.
+
+En la actualidad, la planificación de la producción se realiza de forma empírica, lo que no permite aprovechar al máximo los recursos ni cumplir con los objetivos de producción de forma óptima. Ante este problema, se propone el uso de un modelo matemático basado en programación lineal para optimizar la asignación de recursos.
+
+\section{Fundamentos teóricos de la programación lineal}
+La programación lineal es una técnica matemática de optimización que busca maximizar o minimizar una función objetivo, sujeta a un conjunto de restricciones lineales. Se compone de tres elementos clave:
+
+\begin{itemize}
+    \item \textbf{Función objetivo:} expresión matemática que se desea maximizar (utilidades, producción) o minimizar (costos, tiempos).
+    \item \textbf{Variables de decisión:} representan las cantidades a determinar (por ejemplo, unidades de cada producto a fabricar).
+    \item \textbf{Restricciones:} condiciones impuestas por la disponibilidad de recursos (materia prima, horas máquina, demanda, etc.).
+\end{itemize}
+
+En el contexto empresarial, la programación lineal es ampliamente utilizada para la planificación de producción, control de inventarios, programación de transporte y otros procesos operacionales.
+
+\section{Aplicación del modelo en la empresa}
+\subsection*{a. Recolección de datos}
+Para el desarrollo del modelo, se recopilaron datos relevantes de la empresa como:
+
+\begin{itemize}
+    \item Capacidad de producción por línea y por producto.
+    \item Horas disponibles de trabajo por tipo de máquina.
+    \item Demanda mensual de los productos.
+    \item Costos de producción unitarios.
+    \item Márgenes de ganancia esperados.
+\end{itemize}
+
+Los productos principales considerados fueron varios tipos de estructuras metálicas. Cada uno tiene tiempos distintos de elaboración en diferentes procesos (corte, soldadura, pintura, ensamblaje), lo que complica la planificación.
+
+\subsection*{b. Formulación del modelo}
+Se definieron las siguientes variables:
+
+\begin{center}
+$X_1, X_2, X_3, \ldots, X_n$: Cantidad de unidades a producir de cada tipo de producto.
+\end{center}
+
+La función objetivo fue maximizar la utilidad total esperada:
+
+\begin{center}
+Maximizar $Z = \sum (Precio\_venta_i - Costo\_producción_i) \cdot X_i$
+\end{center}
+
+Las restricciones incluyeron:
+
+\begin{itemize}
+    \item Limitaciones en las horas de operación por tipo de máquina.
+    \item Límites máximos y mínimos de producción.
+    \item Cumplimiento de la demanda de productos.
+    \item Disponibilidad de materia prima.
+\end{itemize}
+
+\subsection*{c. Herramientas utilizadas}
+Se utilizó Solver de Excel para implementar el modelo de programación lineal. Esta herramienta permite definir la función objetivo, las variables de decisión y las restricciones para obtener una solución óptima.
+
+\section{Resultados obtenidos}
+El modelo permitió identificar la combinación óptima de productos a fabricar mensualmente que maximiza las utilidades de la empresa, cumpliendo con todas las restricciones operativas.
+
+Entre los principales hallazgos:
+
+\begin{itemize}
+    \item Se logró una mejor asignación de recursos de maquinaria.
+    \item Se redujeron tiempos muertos y desperdicio de materiales.
+    \item Se propuso un plan de producción que cumple con la demanda proyectada.
+    \item Se incrementó la rentabilidad mensual en comparación con la planificación empírica previa.
+\end{itemize}
+
+Además, el modelo es flexible, lo que permite adaptarlo a diferentes periodos o cambios en la disponibilidad de recursos, costos o demanda.
+
+\section{Conclusiones y recomendaciones}
+La programación lineal demostró ser una herramienta poderosa para la mejora de la planificación de la producción. Permite tomar decisiones basadas en datos cuantitativos, mejorar la eficiencia operativa y aumentar la rentabilidad.
+
+Se recomienda que la empresa:
+
+\begin{itemize}
+    \item Implemente de manera continua este tipo de modelos en su planificación.
+    \item Capacite al personal en el uso de herramientas como Solver.
+    \item Integre el modelo a un sistema de planificación más amplio (MRP o ERP).
+\end{itemize}
+
+Este enfoque puede replicarse en otras empresas del sector metalmecánico con características similares, generando beneficios sostenibles en el mediano y largo plazo.
+
+\end{document}
