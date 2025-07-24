@@ -1,0 +1,2061 @@
+    \documentclass[12pt, a4paper, oneside]{book}
+
+    % ===========================================
+    % PAQUETES NECESARIOS
+    % ===========================================
+    \usepackage[utf8]{inputenc}
+    \usepackage[spanish]{babel}
+    \usepackage{amsmath, amssymb, amsfonts}
+    \usepackage{graphicx}
+    \usepackage{geometry}
+    \usepackage{fancyhdr}
+    \usepackage{xcolor}
+    \usepackage{listings}
+    \usepackage{hyperref}
+    \usepackage{booktabs}
+    \usepackage{array}
+    \usepackage{titlesec}
+    \usepackage{enumitem}
+    \usepackage{tikz}
+    \usepackage{amsthm}
+
+        
+    % ===========================================
+    % CONFIGURACIÓN DE PÁGINA
+    % ===========================================
+    \geometry{
+    left=3cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+    }
+
+    % ===========================================
+    % CONFIGURACIÓN DE ENCABEZADOS
+    % ===========================================
+    \pagestyle{fancy}
+    \fancyhf{}
+    \rhead{\leftmark}           % Título del capítulo
+    \lhead{Casos Matemáticos} % Título general (personalizable)
+    \cfoot{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+
+    % ===========================================
+    % CONFIGURACIÓN DE TÍTULOS
+    % ===========================================
+    \titleformat{\chapter}[display]
+    {\normalfont\bfseries\centering}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+    % ===========================================
+    % ENTORNOS MATEMÁTICOS (UNIFICADOS)
+    % ===========================================
+    \theoremstyle{definition}
+    \newtheorem{definicion}{Definición}[chapter]
+    \newtheorem{teorema}{Teorema}[chapter]
+    \newtheorem{proposicion}{Proposición}[chapter]
+    \newtheorem{ejemplo}{Ejemplo}[chapter]
+    \newtheorem{ejercicio}{Ejercicio}[chapter]
+
+    % ===========================================
+    % CONFIGURACIÓN DE CÓDIGO (LINGO)
+    % ===========================================
+    \lstset{
+        language=C,
+        basicstyle=\ttfamily\footnotesize,
+        backgroundcolor=\color{white},
+        frame=single,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=left,
+        numberstyle=\tiny\color{gray},
+        keywordstyle=\color{black}\bfseries,
+        commentstyle=\color{gray},
+        stringstyle=\color{black}
+    }
+
+    % ===========================================
+    % CONFIGURACIÓN DE HIPERVÍNCULOS
+    % ===========================================
+    \hypersetup{
+    pdftitle={Informe de Programación Lineal},
+    pdfauthor={Jefry Erick Quispe Ramos},
+    pdfsubject={Problemas con Julia},
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black,
+    citecolor=black
+    }
+
+    % ===========================================
+    % COMANDO PARA LA PORTADA
+    % ===========================================
+    \newcommand{\portada}{
+    \begin{titlepage}
+        \centering
+        {\scshape\LARGE Universidad Nacional del Altiplano\par}
+        \vspace{1.5cm}
+        {\scshape\Large Problemas resueltos con JULIA\par}
+        \vspace{1.5cm}
+        {\huge\bfseries Informe de Investigacion de Operaciones\par}
+        \vspace{2cm}
+        {\Large Presentado por:\par}
+        \vspace{0.5cm}
+        {\Large Jefry Erick Quispe Ramos\\
+        Nestor Ademir Ruelas Yana}
+        \vfill
+        {\large \today\par}
+    \end{titlepage}
+    }
+
+    % ===========================================
+    % INICIO DEL DOCUMENTO
+    % ===========================================
+    \begin{document}
+
+    \portada
+    \tableofcontents
+    \newpage
+
+    % ===========================================
+    % EJERCICIO 1: ASIGNACIÓN DE NADADORAS
+    % ===========================================
+
+    \chapter{PROGRAMACION LINEAL}
+
+    \section{DEFINICIONES}
+
+    \begin{definicion}[Programación Lineal (PL)]
+    Modelo matemático para optimizar (maximizar o minimizar) una función objetivo lineal, sujeta a restricciones lineales de igualdad o desigualdad. Todas las variables son continuas.
+
+    \textbf{Ejemplo estándar:}
+    \begin{align*}
+    \text{Maximizar } & \mathbf{c}^T\mathbf{x} \\
+    \text{sujeto a } & A\mathbf{x} \leq \mathbf{b} \\
+    & \mathbf{x} \geq 0
+    \end{align*}
+    \end{definicion}
+
+    \begin{definicion}[Programación Lineal Entera (PLE)]
+    Variante de PL donde \textbf{todas las variables} deben tomar valores enteros. Esencial para problemas discretos (ej: asignación de recursos indivisibles).
+
+    \textbf{Caso típico:}
+    \begin{equation*}
+    x_i \in \mathbb{Z}^+ \quad \forall i
+    \end{equation*}
+    \end{definicion}
+
+    \begin{definicion}[Programación Lineal Mixta (PLM)]
+    Combina variables continuas y enteras en un mismo modelo. Usada cuando solo algunas decisiones requieren discretización.
+
+    \textbf{Estructura:}
+    \begin{equation*}
+    \begin{cases}
+    x_1, x_2 \in \mathbb{R}^+ \\
+    x_3 \in \{0,1\} \quad \text{(variable binaria)}
+    \end{cases}
+    \end{equation*}
+    \end{definicion}
+
+    \begin{definicion}[Modelado en JuMP (Julia)]
+    Lenguaje de modelado matemático en Julia para optimización. Combina sintaxis intuitiva con alto rendimiento.
+
+    \textbf{Ejemplo básico en JuMP:}
+    \begin{lstlisting}[language=Julia]
+    using JuMP, GLPK
+    model = Model(GLPK.Optimizer)
+    @variable(model, x >= 0)       # Variable continua
+    @variable(model, y, Int)       # Variable entera
+    @variable(model, z, Bin)       # Variable binaria (0/1)
+    @objective(model, Max, 2x + 3y + z)
+    @constraint(model, 3x + y <= 10)
+    @constraint(model, x + 2z >= 5)
+    optimize!(model)               # Resolver
+    \end{lstlisting}
+
+    \textbf{Elementos clave:}
+    \begin{itemize}[leftmargin=*]
+    \item \texttt{@variable}: Define variables (continuas, enteras o binarias)
+    \item \texttt{@objective}: Especifica la función objetivo
+    \item \texttt{@constraint}: Añade restricciones lineales
+    \item \texttt{optimize!}: Resuelve el modelo
+    \end{itemize}
+    \end{definicion}
+
+    \begin{definicion}[Ventajas de Julia/JuMP]
+    \begin{itemize}[leftmargin=*]
+    \item \textbf{Open-source}: Gratuito y sin licencias restrictivas
+    \item \textbf{Interoperable}: Conecta con solucionadores como GLPK, Gurobi, CPLEX
+    \item \textbf{Escalable}: Maneja problemas de gran dimensión eficientemente
+    \item \textbf{Reproducible}: Código versionable (vs. interfaces gráficas)
+    \item \textbf{Flexible}: Permite extender modelos a no lineales, estocásticos, etc.
+    \end{itemize}
+    \end{definicion}
+
+    \section{EJERCICIO 1: Programacion entera con solver: Competencia de natacion}
+
+    Para una competencia de relevos 4x100 metros, un equipo de natación debe asignar a cada nadadora uno de los cuatro estilos: libre, pecho, mariposa y dorso. El objetivo es asignar a cada nadadora un estilo de manera que se minimice el tiempo total del equipo. Este problema se resuelve mediante \textbf{programación lineal entera} utilizando \textbf{Excel Solver}.
+
+    \subsection{2. Datos del problema}
+
+    Los tiempos (en segundos) que cada nadadora tarda en nadar cada estilo son los siguientes:
+
+    \begin{center}
+    \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Nadadora} & \textbf{Libre} & \textbf{Pecho} & \textbf{Mariposa} & \textbf{Dorso} \\
+    \midrule
+    Gabriela Hernández & 54 & 54 & 51 & 53 \\
+    Marcela Salinas     & 51 & 57 & 52 & 52 \\
+    Julia Martínez      & 50 & 53 & 54 & 56 \\
+    Claudia Gómez       & 56 & 54 & 55 & 53 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+
+    \subsection{3. Formulación del modelo}
+
+    \subsection{Variables de decisión}
+
+    Sea $X_{ij} = 
+    \begin{cases}
+    1 & \text{si la nadadora } i \text{ nada el estilo } j \\
+    0 & \text{en otro caso}
+    \end{cases}$
+
+    donde \( i \in \{1,2,3,4\} \) representa a cada nadadora y \( j \in \{1,2,3,4\} \) a cada estilo (Libre, Pecho, Mariposa, Dorso).
+
+    \subsection{Función objetivo}
+
+    Minimizar el tiempo total:
+
+    \[
+    \min Z = \sum_{i=1}^{4} \sum_{j=1}^{4} c_{ij} X_{ij}
+    \]
+
+    Donde \( c_{ij} \) es el tiempo que la nadadora \( i \) tarda en el estilo \( j \).
+
+    En este caso:
+
+    \[
+    \min Z = 54X_{11} + 54X_{12} + 51X_{13} + 53X_{14} + 
+    51X_{21} + 57X_{22} + 52X_{23} + 52X_{24} +
+    50X_{31} + 53X_{32} + 54X_{33} + 56X_{34} +
+    56X_{41} + 54X_{42} + 55X_{43} + 53X_{44}
+    \]
+
+    \subsection{Restricciones}
+
+    \begin{itemize}
+        \item Cada estilo debe ser asignado a una sola nadadora:
+        \[
+        \sum_{i=1}^{4} X_{ij} = 1 \quad \text{para todo } j = 1,2,3,4
+        \]
+
+        \item Cada nadadora debe nadar un solo estilo:
+        \[
+        \sum_{j=1}^{4} X_{ij} = 1 \quad \text{para todo } i = 1,2,3,4
+        \]
+
+        \item Variables binarias:
+        \[
+        X_{ij} \in \{0,1\} \quad \text{para todo } i,j
+        \]
+    \end{itemize}
+
+    \subsection{4. Resolución con JULIA}
+
+    Se utilizó JULIA para encontrar la combinación óptima.
+
+
+    \begin{center}
+    \includegraphics[width=0.8\textwidth]{fotos/mo_soleje1.png}
+    \end{center}
+
+    \subsection{5. Solución óptima}
+
+    La asignación óptima es:
+
+    \begin{itemize}
+        \item Gabriela: Mariposa
+        \item Marcela: Dorso
+        \item Julia: Libre
+        \item Claudia: Pecho
+    \end{itemize}
+
+    Tiempo total mínimo: \textbf{207 segundos}.
+
+    \newpage
+    \section{Ejercicio 2: Progamacion entera : Fabricación de lotes de prendas (Programación Lineal Entera Mixta)}
+
+    Se planteó un modelo de programación lineal para maximizar las ganancias en la producción de dos tipos de extractos: para beber y concentrado. El modelo fue resuelto utilizando el complemento de JULIA, obteniéndose una solución óptima.
+
+    \textbf{Datos del problema:}
+
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|}
+    \hline
+    \textbf{Parámetro} & \textbf{Pantalones} & \textbf{Chalecos} & \textbf{Chamarras} \\
+    \hline
+    Piel por unidad (pies$^2$) & 5 & 3 & 8 \\
+    Mano de obra por unidad (h) & 4 & 3 & 5 \\
+    Costo variable por unidad (\$) & 30 & 20 & 80 \\
+    Costo fijo por lote (\$) & 100 & 80 & 150 \\
+    Precio de venta (\$) & 60 & 40 & 120 \\
+    Producción mínima si se fabrica & 100 & 150 & 200 \\
+    \hline
+    \end{tabular}
+    \end{center}
+
+    Disponibilidades:
+    \begin{itemize}
+        \item Piel disponible: 3000 pies$^2$
+        \item Mano de obra disponible: 2500 horas
+    \end{itemize}
+
+    \subsection{Modelo matemático}
+
+    \textbf{Variables:}
+    \begin{itemize}
+        \item $x_i$: unidades a fabricar del producto $i$
+        \item $y_i$: variable binaria, vale 1 si se fabrica el producto $i$, 0 si no
+    \end{itemize}
+
+    \textbf{Función objetivo:}
+    \[
+    \max Z = \sum_{i=1}^{3} \left[ (PV_i - CVAR_i)\cdot x_i - CFIJO_i \cdot y_i \right]
+    \]
+
+    \textbf{Restricciones:}
+    \begin{align*}
+    5x_1 + 3x_2 + 8x_3 &\leq 3000 && \text{(restricción de piel)} \\
+    4x_1 + 3x_2 + 5x_3 &\leq 2500 && \text{(restricción de mano de obra)} \\
+    x_1 &\leq 999999 y_1 \\
+    x_2 &\leq 999999 y_2 \\
+    x_3 &\leq 999999 y_3 \\
+    x_1 &\geq 100 y_1 \\
+    x_2 &\geq 150 y_2 \\
+    x_3 &\geq 200 y_3 \\
+    x_i &\in \mathbb{Z}_{\geq 0},\quad y_i \in \{0,1\} && \text{(enteras y binarias)}
+    \end{align*}
+
+    \subsection{Solución óptima}
+
+    \begin{center}
+    \includegraphics[width=0.5\textwidth]{fotos/mo_soleje2.png}
+    \end{center}
+
+    Según JULIA, la solución óptima es:
+
+    \begin{itemize}
+        \item \textbf{Pantalones:} 501 unidades ($y_1 = 1$)
+        \item \textbf{Chalecos:} 165 unidades ($y_2 = 1$)
+        \item \textbf{Chamarras:} 0 unidades ($y_3 = 0$)
+    \end{itemize}
+
+    \textbf{Utilidad total:} \$18,150
+
+    Esto significa que se deben fabricar pantalones y chalecos, y no conviene fabricar chamarras en este caso.
+
+
+    \newpage
+
+    \section{EJERCICIO 3: Programacion entera: Fabricacion de articulos}
+
+    Un empresario que fabrica tres artículos \(P_1, P_2, P_3\), desea encontrar la producción diaria que le permita maximizar sus beneficios. Los artículos son procesados en dos de las cuatro máquinas disponibles, ya sea en A y B, o bien en C y D. Los costos diarios fijos por iniciar estas máquinas son:
+
+    \begin{itemize}
+        \item Máquina A: 20 unidades monetarias,
+        \item Máquina B: 25 unidades monetarias,
+        \item Máquina C: 35 unidades monetarias,
+        \item Máquina D: 15 unidades monetarias.
+    \end{itemize}
+
+    Los ingresos por unidad vendida son:
+
+    \begin{itemize}
+        \item \(P_1\): 5 unidades monetarias,
+        \item \(P_2\): 5 unidades monetarias,
+        \item \(P_3\): 10 unidades monetarias.
+    \end{itemize}
+
+    Las horas necesarias para procesar una unidad de cada artículo en cada máquina se muestran en la siguiente tabla:
+
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    & A & B & C & D \\
+    \hline
+    P1 & 1 & 1 & 2 & 1 \\
+    P2 & 1 & 1 & 1 & 2 \\
+    P3 & 2 & 1 & 1 & 1 \\
+    \hline
+    \end{tabular}
+    \end{center}
+
+    Las horas disponibles por día en las máquinas son:  
+    Máquina A: 190 h, B: 210 h, C: 170 h, D: 200 h.
+
+    \subsection{Definición de variables}
+
+    \begin{itemize}
+        \item \(x_1, x_2, x_3\): número de unidades producidas de \(P_1, P_2, P_3\), respectivamente.
+        \item \(y_1 = 1\) si se utilizan las máquinas A y B, 0 en otro caso.
+        \item \(y_2 = 1\) si se utilizan las máquinas C y D, 0 en otro caso.
+    \end{itemize}
+
+    \subsection{Función Objetivo}
+
+    \[
+    \text{Maximizar } Z = 5x_1 + 5x_2 + 10x_3 - \left[ (20 + 25)y_1 + (35 + 15)y_2 \right]
+    \]
+
+    \subsection{Restricciones}
+
+    \begin{align*}
+    x_1 + x_2 + 2x_3 &\leq 190 + M(1 - y_1) \quad &\text{(Máquina A)} \\
+    x_1 + x_2 + x_3 &\leq 210 + M(1 - y_1) \quad &\text{(Máquina B)} \\
+    2x_1 + x_2 + x_3 &\leq 170 + M(1 - y_2) \quad &\text{(Máquina C)} \\
+    x_1 + 2x_2 + x_3 &\leq 200 + M(1 - y_2) \quad &\text{(Máquina D)} \\
+    y_1 + y_2 &= 1 \\
+    x_1, x_2, x_3 &\geq 0,\quad \text{enteras} \\
+    y_1, y_2 &\in \{0,1\}
+    \end{align*}
+
+    \subsection{Resolución por Enumeración de Casos - JULIA}
+
+    \subsection{Caso 1: \(y_1 = 1, y_2 = 0\)}
+
+    Se utilizan máquinas A y B.  
+    \[
+    Z = 5x_1 + 5x_2 + 10x_3 - 45
+    \]
+    \[
+    \begin{aligned}
+    x_1 + x_2 + 2x_3 &\leq 190 \\
+    x_1 + x_2 + x_3 &\leq 210
+    \end{aligned}
+    \]
+
+    Maximizamos \(x_3\), pues tiene mayor contribución. Si \(x_3 = 95\), entonces:
+
+    \[
+    x_1 = x_2 = 0 \Rightarrow Z = 950 - 45 = 905
+    \]
+
+    \subsection{Caso 2: \(y_1 = 0, y_2 = 1\)}
+
+    Se utilizan máquinas C y D.  
+    \[
+    Z = 5x_1 + 5x_2 + 10x_3 - 50
+    \]
+    \[
+    \begin{aligned}
+    2x_1 + x_2 + x_3 &\leq 170 \\
+    x_1 + 2x_2 + x_3 &\leq 200
+    \end{aligned}
+    \]
+
+    Probamos \(x_3 = 90, x_1 = 0, x_2 = 40\):
+
+    \[
+    2(0) + 40 + 90 = 130 \leq 170 \\
+    0 + 80 + 90 = 170 \leq 200
+    \]
+
+    Entonces:  
+    \[
+    Z = 5(0) + 5(40) + 10(90) - 50 = 1650
+    \]
+
+    \subsection{Conclusión}
+
+    \begin{center}
+    \includegraphics[width=0.5\textwidth]{fotos/mo_soleje3.png}
+    \end{center}
+
+    La mejor alternativa es utilizar las máquinas C y D, con la siguiente producción:
+
+    \[
+    x_1 = 0, \quad x_2 = 0, \quad x_3 = 170
+    \]
+
+    El beneficio máximo es:
+    \[
+    \boxed{Z = 1650}
+    \]
+
+
+    \newpage
+    \section{Ejercicio 4: programacion lineal: Mercado}
+
+    Una cierta empresa tiene una sola línea de producción en la cual tiene que producir los tres productos (A, B y C) que mantiene en el mercado. Las demandas diarias que tiene que satisfacer para la siguiente semana, los ritmos de producción, los inventarios iniciales y los costos diarios de inventario por unidad de cada producto son los siguientes:
+
+    \begin{center}
+    \begin{tabular}{|c|cccccc|c|c|c|}
+    \hline
+    \textbf{Producto} & \textbf{Día 1} & \textbf{Día 2} & \textbf{Día 3} & \textbf{Día 4} & \textbf{Día 5} & \textbf{Día 6} & \textbf{Ritmo (unid/hora)} & \textbf{Inventario inicial} & \textbf{Costo inventario} \\
+    \hline
+    A & 45 & 30 & 35 & 25 & 30 & 35 & 10 & 60 & 3 \\
+    B & 15 & 10 & 15 & 20 & 15 & 15 & 15 & 0 & 2 \\
+    C & 20 & 25 & 30 & 25 & 25 & 30 & 20 & 10 & 2 \\
+    \hline
+    \end{tabular}
+    \end{center}
+
+    La línea de producción tiene una capacidad diaria de 16 horas, pero por cada tipo de producto que se decida fabricar en el día se consumen 2 horas adicionales por preparación. El costo de cada preparación es de \$150.
+
+    Se desea programar la producción para los seis días de la semana, cumpliendo toda la demanda y minimizando la suma total de los costos de inventario y de preparación.
+
+    \subsection{Variables}
+
+    \begin{itemize}
+        \item \(x_{i,j}\): unidades del producto \(i\) producidas en el día \(j\),
+        \item \(inv_{i,j}\): inventario del producto \(i\) al final del día \(j\),
+        \item \(z_{i,j}\): variable binaria que indica si el producto \(i\) fue producido el día \(j\) (1) o no (0).
+    \end{itemize}
+
+    \subsection{Función Objetivo}
+
+    Minimizar el costo total:
+    \[
+    \min \sum_{i=1}^{3} \sum_{j=1}^{6} 150 \cdot z_{i,j} + inv_{i,j} \cdot \text{costo\_inv}_i
+    \]
+
+    \subsection{Restricciones}
+
+    \begin{itemize}
+        \item Inventario inicial:
+        \[
+        inv_{i,1} = x_{i,1} + \text{inv\_inicial}_i - \text{demanda}_{i,1}
+        \]
+        \item Balance de inventario para días siguientes:
+        \[
+        inv_{i,j} = inv_{i,j-1} + x_{i,j} - \text{demanda}_{i,j} \quad \forall j = 2, \dots, 6
+        \]
+        \item Límite de producción diaria:
+        \[
+        \sum_{i=1}^{3} \frac{x_{i,j}}{\text{ritmo}_i} + 2 \cdot \sum_{i=1}^{3} z_{i,j} \leq 16 \quad \forall j
+        \]
+        \item Relación entre producción y preparación:
+        \[
+        x_{i,j} \leq M \cdot z_{i,j}
+        \]
+        Donde \(M\) es un número suficientemente grande.
+    \end{itemize}
+
+    \subsection{Resultado JULIA}
+
+    \begin{center}
+    \includegraphics[width=0.7\textwidth]{fotos/mo_soleje4.1.png}
+    \end{center}
+
+    \begin{center}
+    \includegraphics[width=0.5\textwidth]{fotos/mo_soleje4.2.png}
+    \end{center}
+
+    \subsection{Solución Óptima}
+    Julia encontró una solución óptima global con un \textbf{costo total mínimo de \$1,755}. A continuación se detallan los resultados clave:
+
+    \begin{itemize}
+        \item \textbf{Tipo de modelo}: Programación Lineal Entera Mixta (MILP).
+        \item \textbf{Variables enteras}: 18 (preparaciones $z_{i,j}$).
+    \end{itemize}
+
+    \subsection{Producción por Día}
+    \begin{table}[h!]
+    \centering
+    \caption{Producción óptima ($x_{i,j}$) y preparaciones ($z_{i,j}$)}
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Producto} & \textbf{Día 1} & \textbf{Día 2} & \textbf{Día 3} & \textbf{Día 4} & \textbf{Día 5} & \textbf{Día 6} \\ \hline
+    A & 15  & 0  & 25  & 0  & 35  & 0  \\ \hline
+    B & 25  & 15  & 0  & 30  & 15  & 0  \\ \hline
+    C & 25  & 0  & 25  & 0  & 30  & 0  \\ \hline
+    \end{tabular}
+    \label{tab:produccion}
+    \end{table}
+
+
+
+    \subsection{Análisis de Restricciones}
+    \begin{itemize}
+        \item \textbf{Capacidad diaria}: Las restricciones de capacidad fueron activas ($\text{Slack} = 0$) en los días 1, 3 y 5.
+        \item \textbf{Preparaciones}: Total de 11 preparaciones activas (costos: \$150 c/u).
+    \end{itemize}
+
+    \newpage
+    \section{EJERCICIO 5: prog lineal: Transporte}
+
+    Una empresa desea programar el transporte de su producto principal que se elabora en 4 plantas con destino a 3 almacenes. Se conoce la demanda de los almacenes, la capacidad de producción de las plantas y el costo de transporte por unidad de transporte de una planta a un almacén.
+
+    \subsection{Datos del Problema}
+
+    \textbf{Costos de Transporte (\$/Unidad):}
+
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Plantas} & \textbf{Almacén 1} & \textbf{Almacén 2} & \textbf{Almacén 3} & \textbf{Capacidad} \\
+    \hline
+    1 & 3 & 2 & 4 & 950 \\
+    \hline
+    2 & 2 & 4 & 3 & 1150 \\
+    \hline
+    3 & 3 & 5 & 3 & 1000 \\
+    \hline
+    4 & 4 & 3 & 2 & 900 \\
+    \hline
+    \textbf{Demanda} & \textbf{1200} & \textbf{900} & \textbf{500} & - \\
+    \hline
+    \end{tabular}
+    \end{center}
+
+    \textbf{Objetivo:} Elaborar un modelo de programación lineal que permita hallar el plan óptimo de transporte.
+
+    \subsection{Definición de Variables}
+
+    Sea $x_{ij}$ la cantidad de unidades a transportar desde la planta $i$ hasta el almacén $j$, donde:
+    \begin{itemize}
+        \item $i \in \{1, 2, 3, 4\}$ representa las plantas
+        \item $j \in \{1, 2, 3\}$ representa los almacenes
+    \end{itemize}
+
+    $$x_{ij} \geq 0 \quad \forall i \in \{1,2,3,4\}, \forall j \in \{1,2,3\}$$
+
+    \subsection{Función Objetivo}
+
+    Minimizar el costo total de transporte:
+
+    $$\min Z = \sum_{i=1}^{4} \sum_{j=1}^{3} c_{ij} \cdot x_{ij}$$
+
+    Donde $c_{ij}$ es el costo unitario de transporte desde la planta $i$ al almacén $j$.
+
+    Expandiendo la función objetivo:
+    \begin{align}
+    \min Z = &3x_{11} + 2x_{12} + 4x_{13} + 2x_{21} + 4x_{22} + 3x_{23} \nonumber \\
+    &+ 3x_{31} + 5x_{32} + 3x_{33} + 4x_{41} + 3x_{42} + 2x_{43}
+    \end{align}
+
+    \subsection{Restricciones}
+
+    \subsection{Restricciones de Capacidad de las Plantas}
+    Cada planta no puede enviar más de su capacidad de producción:
+
+    \begin{align}
+    \sum_{j=1}^{3} x_{1j} &\leq 950 \quad \text{(Planta 1)} \\
+    \sum_{j=1}^{3} x_{2j} &\leq 1150 \quad \text{(Planta 2)} \\
+    \sum_{j=1}^{3} x_{3j} &\leq 1000 \quad \text{(Planta 3)} \\
+    \sum_{j=1}^{3} x_{4j} &\leq 900 \quad \text{(Planta 4)}
+    \end{align}
+
+    Equivalentemente:
+    \begin{align}
+    x_{11} + x_{12} + x_{13} &\leq 950 \\
+    x_{21} + x_{22} + x_{23} &\leq 1150 \\
+    x_{31} + x_{32} + x_{33} &\leq 1000 \\
+    x_{41} + x_{42} + x_{43} &\leq 900
+    \end{align}
+
+    \subsection{Restricciones de Demanda de los Almacenes}
+    Cada almacén debe recibir al menos su demanda requerida:
+
+    \begin{align}
+    \sum_{i=1}^{4} x_{i1} &\geq 1200 \quad \text{(Almacén 1)} \\
+    \sum_{i=1}^{4} x_{i2} &\geq 900 \quad \text{(Almacén 2)} \\
+    \sum_{i=1}^{4} x_{i3} &\geq 500 \quad \text{(Almacén 3)}
+    \end{align}
+
+    Equivalentemente:
+    \begin{align}
+    x_{11} + x_{21} + x_{31} + x_{41} &\geq 1200 \\
+    x_{12} + x_{22} + x_{32} + x_{42} &\geq 900 \\
+    x_{13} + x_{23} + x_{33} + x_{43} &\geq 500
+    \end{align}
+
+    \subsection{Restricciones de No Negatividad}
+    $$x_{ij} \geq 0 \quad \forall i \in \{1,2,3,4\}, \forall j \in \{1,2,3\}$$
+
+    \subsection{Solución Obtenida}
+
+    \begin{center}
+    \includegraphics[width=0.95\textwidth]{fotos/mo_soleje5.png}
+    \end{center}
+
+    \subsection{Resultados Numéricos}
+    La solución óptima encontrada por JULIA es:
+
+    \begin{table}[h]
+    \centering
+    \caption{Asignaciones Óptimas de Transporte ($x_{ij}$)}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{Planta $\backslash$ Almacén} & \textbf{Almacén 1} & \textbf{Almacén 2} & \textbf{Almacén 3} \\ \hline
+    Planta 1 & 0 & 900 & 0 \\ \hline
+    Planta 2 & 1150 & 0 & 0 \\ \hline
+    Planta 3 & 50 & 0 & 0 \\ \hline
+    Planta 4 & 0 & 0 & 500 \\ \hline
+    \end{tabular}
+    \end{table}
+
+    \begin{itemize}
+    \item \textbf{Costo mínimo total:} \$5,250.00
+    \end{itemize}
+
+
+    \subsection{Interpretación de Resultados}
+    \begin{itemize}
+    \item \textbf{Planta 3} se utiliza muy poco.
+    \item \textbf{Planta 4} solo abastece al Almacén 3.
+    \item La solución aprovecha las rutas más económicas:
+    \begin{itemize}
+    \item Planta 2 $\rightarrow$ Almacén 1 (costo \$2/unidad)
+    \item Planta 1 $\rightarrow$ Almacén 2 (costo \$2/unidad)
+    \item Planta 4 $\rightarrow$ Almacén 3 (costo \$2/unidad)
+    \end{itemize}
+    \end{itemize}
+
+
+
+    \newpage
+    \section{EJERCICIO 6: Prog. Lineal Bloques}
+
+    La empresa "Triturados y Derivados S.A." (TRIDESA) desea determinar la cantidad óptima de bloques de concreto tipo I, II y III a producir para maximizar la utilidad, considerando las restricciones de recursos disponibles.
+
+    \subsection{Datos del Problema}
+
+    \begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Block} & \textbf{Cemento} & \textbf{Arena} & \textbf{Grava} & \textbf{Agua} & \textbf{H. Máq.} & \textbf{Utilidad} \\
+    \textbf{(tipo)} & \textbf{(kg)} & \textbf{(kg)} & \textbf{(kg)} & \textbf{(litros)} & \textbf{(horas)} & \textbf{(\$/unidad)} \\
+    \hline
+    I & 1.50 & 0.80 & 0.40 & 0.30 & 0.004 & 6 \\
+    II & 1.20 & 0.60 & 0.60 & 0.40 & 0.002 & 8 \\
+    III & 0.80 & 1.00 & 0.80 & 0.50 & 0.010 & 9 \\
+    \hline
+    \textbf{Disponibilidad} & \textbf{12000 kg} & \textbf{8000 kg} & \textbf{600 kg} & \textbf{400 litros} & \textbf{300 horas} & \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    \textbf{Restricción adicional:} Se debe producir como mínimo 100 bloques de cada tipo.
+
+    \subsection{DEFINICIÓN DE VARIABLES}
+
+    Sea:
+    \begin{align}
+    x_1 &= \text{Número de bloques tipo I a producir} \\
+    x_2 &= \text{Número de bloques tipo II a producir} \\
+    x_3 &= \text{Número de bloques tipo III a producir}
+    \end{align}
+
+    \subsection{FUNCIÓN OBJETIVO}
+
+    Maximizar la utilidad total:
+    \begin{equation}
+    \text{MAX } Z = 6x_1 + 8x_2 + 9x_3
+    \end{equation}
+
+    \subsection{RESTRICCIONES}
+
+    \subsection{Restricciones de Recursos}
+
+    \textbf{Cemento:}
+    \begin{equation}
+    1.50x_1 + 1.20x_2 + 0.80x_3 \leq 12000
+    \end{equation}
+
+    \textbf{Arena:}
+    \begin{equation}
+    0.80x_1 + 0.60x_2 + 1.00x_3 \leq 8000
+    \end{equation}
+
+    \textbf{Grava:}
+    \begin{equation}
+    0.40x_1 + 0.60x_2 + 0.80x_3 \leq 600
+    \end{equation}
+
+    \textbf{Agua:}
+    \begin{equation}
+    0.30x_1 + 0.40x_2 + 0.50x_3 \leq 400
+    \end{equation}
+
+    \textbf{Horas máquina:}
+    \begin{equation}
+    0.004x_1 + 0.002x_2 + 0.010x_3 \leq 300
+    \end{equation}
+
+    \subsection{Restricciones de Producción Mínima}
+
+    \begin{align}
+    x_1 &\geq 100 \\
+    x_2 &\geq 100 \\
+    x_3 &\geq 100
+    \end{align}
+
+    \subsection{Restricciones de No Negatividad}
+
+    \begin{equation}
+    x_1, x_2, x_3 \geq 0
+    \end{equation}
+
+    \subsection{ANÁLISIS DE RESTRICCIONES}
+
+    Para resolver este problema, primero identificamos cuál es la restricción más limitante.
+
+    Calculemos la capacidad máxima de producción para cada recurso si solo produjéramos un tipo de bloque:
+
+    \subsection{Capacidades Máximas por Recurso}
+
+    \textbf{Para Cemento:}
+    \begin{align}
+    \text{Solo tipo I: } &\frac{12000}{1.50} = 8000 \text{ bloques} \\
+    \text{Solo tipo II: } &\frac{12000}{1.20} = 10000 \text{ bloques} \\
+    \text{Solo tipo III: } &\frac{12000}{0.80} = 15000 \text{ bloques}
+    \end{align}
+
+    \textbf{Para Arena:}
+    \begin{align}
+    \text{Solo tipo I: } &\frac{8000}{0.80} = 10000 \text{ bloques} \\
+    \text{Solo tipo II: } &\frac{8000}{0.60} = 13333 \text{ bloques} \\
+    \text{Solo tipo III: } &\frac{8000}{1.00} = 8000 \text{ bloques}
+    \end{align}
+
+    \textbf{Para Grava:}
+    \begin{align}
+    \text{Solo tipo I: } &\frac{600}{0.40} = 1500 \text{ bloques} \\
+    \text{Solo tipo II: } &\frac{600}{0.60} = 1000 \text{ bloques} \\
+    \text{Solo tipo III: } &\frac{600}{0.80} = 750 \text{ bloques}
+    \end{align}
+
+    \textbf{Para Agua:}
+    \begin{align}
+    \text{Solo tipo I: } &\frac{400}{0.30} = 1333 \text{ bloques} \\
+    \text{Solo tipo II: } &\frac{400}{0.40} = 1000 \text{ bloques} \\
+    \text{Solo tipo III: } &\frac{400}{0.50} = 800 \text{ bloques}
+    \end{align}
+
+    \textbf{Para Horas máquina:}
+    \begin{align}
+    \text{Solo tipo I: } &\frac{300}{0.004} = 75000 \text{ bloques} \\
+    \text{Solo tipo II: } &\frac{300}{0.002} = 150000 \text{ bloques} \\
+    \text{Solo tipo III: } &\frac{300}{0.010} = 30000 \text{ bloques}
+    \end{align}
+
+    \subsection{IDENTIFICACIÓN DE LA RESTRICCIÓN ACTIVA}
+
+    Observamos que la \textbf{grava} es el recurso más limitante, especialmente para el bloque tipo III (750 bloques máximo).
+
+
+    \subsection{Caso Base: Producción Mínima}
+
+    Primero, verifiquemos si es posible producir el mínimo requerido (100 de cada tipo):
+
+    \textbf{Consumo con producción mínima:}
+    \begin{align}
+    \text{Grava: } &0.40(100) + 0.60(100) + 0.80(100) = 40 + 60 + 80 = 180 \text{ kg} \\
+    \text{Agua: } &0.30(100) + 0.40(100) + 0.50(100) = 30 + 40 + 50 = 120 \text{ litros}
+    \end{align}
+
+    Esto es factible. Nos quedan:
+    \begin{align}
+    \text{Grava disponible: } &600 - 180 = 420 \text{ kg} \\
+    \text{Agua disponible: } &400 - 120 = 280 \text{ litros}
+    \end{align}
+
+    \subsection{OPTIMIZACIÓN}
+
+    Para maximizar la utilidad con los recursos restantes, analizamos la utilidad por unidad de recurso limitante (grava):
+
+    \begin{align}
+    \text{Utilidad/kg grava tipo I: } &\frac{6}{0.40} = 15 \text{ \$/kg} \\
+    \text{Utilidad/kg grava tipo II: } &\frac{8}{0.60} = 13.33 \text{ \$/kg} \\
+    \text{Utilidad/kg grava tipo III: } &\frac{9}{0.80} = 11.25 \text{ \$/kg}
+    \end{align}
+
+    El tipo I tiene la mayor utilidad por kg de grava, seguido del tipo II.
+
+    \subsection{SOLUCIÓN ÓPTIMA}
+    \begin{center}
+    \includegraphics[width=0.95\textwidth]{fotos/mo_soleje7.png}
+    \end{center}
+
+    \subsection{UTILIDAD OBTENIDA}
+
+    se obtuvo una utilidad total de : 1.776 en cuanto a encontrar la optimizacion de bloques de concreto de diferentes tipos.
+
+    \newpage
+    \section{EJERCICIO 7: Prog Lineal: Bebidas}
+    Una empresa fabrica tres tipos de licores: Añejo, Frutado y Seco, usando tres tipos de insumos: A, B y C. Cada tipo de licor tiene una proporción específica de insumos, y los insumos tienen una disponibilidad mensual limitada. El objetivo es maximizar la utilidad total considerando los ingresos por venta, los costos de insumos y los costos por almacenamiento del excedente de producción. No se permite almacenar insumos.
+
+    \subsection{Función Objetivo}
+    Maximizar la utilidad total:
+    \[
+    Z = \sum_{i,j} (\text{PrecioVenta}_{i} \cdot V_{i,j} - 0.5 \cdot Y_{i,j}) - \sum_{i,j,k} (\text{Costo}_{k} \cdot \text{Requerimiento}_{i,k} \cdot X_{i,j})
+    \]
+    Donde:
+    \begin{itemize}
+    \item $X_{i,j}$: producción del licor $i$ en el mes $j$.
+    \item $V_{i,j}$: venta del licor $i$ en el mes $j$.
+    \item $Y_{i,j}$: inventario del licor $i$ al final del mes $j$.
+    \end{itemize}
+
+    \subsection{Restricciones}
+    \begin{enumerate}
+    \item Restricción de demanda:
+    \[
+    V_{i,j} + Y_{i,j} \leq \text{MáxVenta}_{i,j}
+    \]
+    
+    \item Restricción de insumos:
+    \[
+    \sum_i \text{Requerimiento}_{i,k} \cdot X_{i,j} \leq \text{Disponibilidad}_{k}, \quad \forall k, j
+    \]
+    
+    \item Balance de inventarios:
+    \[
+    \begin{cases}
+    Y_{i,1} = X_{i,1} - V_{i,1} \\
+    Y_{i,j} = Y_{i,j-1} + X_{i,j} - V_{i,j}, \quad j > 1
+    \end{cases}
+    \]
+    \end{enumerate}
+
+
+    \subsection{Valor óptimo de la función objetivo}
+
+    El valor óptimo de la función objetivo, correspondiente a la utilidad total obtenida por las ventas del vino, fue:
+
+    \begin{center}
+    \textbf{Utilidad total óptima:} \$1,788,729
+    \end{center}
+
+    \subsection{Valores óptimos de las variables de decisión}
+
+    Se muestran a continuación los valores óptimos de las variables $X(i,j)$ (cantidad de vino del tipo $i$ que se vende en el mes $j$):
+
+    \begin{table}
+    \centering
+    \caption{Valores óptimos de $X(i,j)$}
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Tipo de vino} & \textbf{Mes 1} & \textbf{Mes 2} & \textbf{Mes 3} & \textbf{Mes 4} \\
+    \hline
+    Añejo   & 10000 & 12000 & 14000 & 8000 \\
+    Frutado & 12000 & 9000 & 12000 & 14000 \\
+    Seco    & 11000    & 13000    & 10000    & 8000 \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    \subsection{Interpretación de los resultados}
+
+    Del análisis de la solución óptima se observa lo siguiente:
+
+    \begin{itemize}
+        \item La totalidad de la producción está centrada en los vinos \textbf{Añejo} y \textbf{Frutado}.
+        \item No se produce ni vende vino \textbf{Seco}, lo que indica que su contribución marginal a la utilidad total es menor en comparación con los otros tipos de vino.
+        \item Se respeta completamente la disponibilidad de insumos y las restricciones de venta máxima mensual por tipo de vino.
+    \end{itemize}
+
+    \subsection{Recursos utilizados}
+
+    Las cantidades máximas disponibles de los insumos son:
+
+    \begin{itemize}
+        \item Insumo 1: 6000 unidades
+        \item Insumo 2: 7500 unidades
+        \item Insumo 3: 5600 unidades
+    \end{itemize}
+
+    El modelo hace uso completo o parcial de dichos insumos, cumpliendo las restricciones de disponibilidad y proporciones requeridas para cada tipo de vino.
+
+    \subsection{Conclusión}
+
+    El modelo de programación lineal permite optimizar la combinación de vinos a producir y vender en cada mes, maximizando la utilidad bajo las restricciones impuestas. En este caso, se determinó que producir exclusivamente los vinos Añejo y Frutado genera la mayor rentabilidad posible dentro de las condiciones dadas.
+
+
+
+    \subsection{Resultado}
+
+    \begin{center}
+    \includegraphics[width=0.7\textwidth]{fotos/mo_soleje7.png}
+    \end{center}
+
+    \newpage
+    \section{EJERCICIO 8: Prog Lineal Extractos}
+
+    Se planteó un modelo de programación lineal para maximizar las ganancias en la producción de dos tipos de extractos: para beber y concentrado. El modelo fue resuelto utilizando el complemento JULIA, obteniéndose una solución óptima.
+
+    \subsection{Función objetivo}
+    Maximizar:
+    \[
+    Z = 100X_1 + 200X_2
+    \]
+    donde:
+    \begin{itemize}
+        \item \( X_1 \): hectolitros de extracto para beber
+        \item \( X_2 \): hectolitros de extracto concentrado
+    \end{itemize}
+
+    \subsection{Restricciones}
+    \begin{align*}
+    300X_1 + 400X_2 &\leq 60000 && \text{(Fruta disponible)} \\
+    300X_1 + 200X_2 &\leq 48000 && \text{(Preservante)} \\
+    X_1 + 3X_2 &\geq 210 && \text{(Horas de trabajo)} \\
+    X_2 &\leq 2X_1 && \text{(Límite de proporción)} \\
+    X_1, X_2 &\geq 0 && \text{(No negatividad)}
+    \end{align*}
+
+    \subsection{Parámetros del problema}
+
+    \begin{table}[h]
+    \centering
+    \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Producto} & \textbf{Fruta (kg)} & \textbf{T. Trabajo (h)} & \textbf{Preservante (g)} & \textbf{Costo (\$)} \\
+    \midrule
+    Para beber        & 300                 & 1                       & 300                      & 100                \\
+    Concentrado       & 400                 & 3                       & 200                      & 200                \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+
+    \subsection{Disponibilidad de recursos}
+
+    \begin{itemize}
+        \item Fruta: 60,000 kg
+        \item Tiempo de trabajo: 210 horas (mínimo)
+        \item Preservante: 48,000 gramos
+    \end{itemize}
+
+    \subsection{Resultados óptimos}
+
+    Los valores óptimos obtenidos con Solver fueron:
+
+    \begin{itemize}
+        \item \( X_1 = 68.571 \) hectolitros de extracto para beber
+        \item \( X_2 = 98.571 \) hectolitros de extracto concentrado
+        \item \textbf{Ganancia total:} \$26,571.43
+    \end{itemize}
+
+    \subsection{Verificación de restricciones}
+
+    \begin{itemize}
+        \item Fruta utilizada: \( 300(68.571) + 400(98.571) = 60000 \leq 60000 \)
+        \item Preservante utilizado: \( 300(68.571) + 200(98.571) = 40285.71 \leq 48000 \)
+        \item Horas trabajadas: \( 1(68.571) + 3(98.571) = 364.29 \geq 210 \)
+        \item Proporción: \( X_2 = 98.571 \leq 2 \cdot 68.571 = 137.14 \)
+    \end{itemize}
+
+    \subsection{Interpretación}
+    \begin{center}
+    \includegraphics[width=0.6\textwidth]{fotos/mo_soleje8.png}
+    \end{center}
+
+    \begin{itemize}
+        \item La solución hace uso completo de la fruta disponible (60,000 kg).
+        \item Se usa menos del total disponible de preservante (40,286 de 48,000 gramos).
+        \item La exigencia mínima de 210 horas se supera ampliamente (364.29 h).
+        \item La producción de extracto concentrado no excede el doble del extracto para beber.
+        \item La ganancia máxima alcanzada es de \$27,272.73, distribuyendo eficientemente los recursos.
+    \end{itemize}
+
+
+    \newpage
+    \section{EJERCICIO 9:Prog Lineal Entera Asignación de Docentes}
+
+    \subsection{Planteamiento del problema}
+
+    La directora de un centro educativo desea asignar 5 asignaturas \( A1, A2, A3, A4, A5 \) a 4 profesores \( P1, P2, P3, P4 \) en base a valoraciones dadas por los alumnos. Además, hay restricciones:
+    \begin{itemize}
+        \item El profesor P3 no puede impartir A1 ni A2.
+        \item Cada asignatura debe ser impartida por un solo profesor.
+        \item Ningún profesor puede tener más de 2 asignaturas.
+        \item El profesor P1 sólo puede tener 1 asignatura.
+    \end{itemize}
+    El objetivo es maximizar la valoración total.
+
+    \subsection{Valoraciones promedio}
+
+    \begin{center}
+    \begin{tabular}{cccccc}
+    \toprule
+    & A1 & A2 & A3 & A4 & A5 \\
+    \midrule
+    P1 & 2.7 & 2.2 & 3.4 & 2.8 & 3.6 \\
+    P2 & 2 & 3.6 & 3.4 & 2.8 & 3.6 \\
+    P3 & 3.2  & 3.8  & 2.3 & 1.9 & 2.6 \\
+    P4 & 2.6 & 2.5 & 1.8 & 4.2 & 3.5 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+
+    \subsection{Función Objetivo}
+
+    Definimos variables binarias:
+    \[
+    x_{ij} =
+    \begin{cases}
+    1 & \text{si el profesor } i \text{ imparte la asignatura } j \\
+    0 & \text{en caso contrario}
+    \end{cases}
+    \]
+
+    Maximizar:
+    \[
+    Z = 2.7x_{11} + 2.2x_{12} + 3.4x_{13} + 2.8x_{14} + 3.8x_{15} + 3.6x_{21} + 3.4x_{22} + 2.8x_{23} + 3.6x_{24} + 3.5x_{25} + 3.1x_{33} + 2.9x_{34} + 3.3x_{35} + 2.6x_{41} + 2.5x_{42} + 1.8x_{43} + 4.2x_{44} + 3.5x_{45}
+    \]
+
+    \subsection{Restricciones}
+
+    \begin{itemize}
+    \item Cada asignatura debe ser asignada a un solo profesor:
+    \[
+    \sum_{i=1}^4 x_{ij} = 1 \quad \forall j = 1,\ldots,5
+    \]
+
+    \item P1 puede tener máximo 1 asignatura:
+    \[
+    \sum_{j=1}^5 x_{1j} \leq 1
+    \]
+
+    \item P2, P3, P4 pueden tener máximo 2 asignaturas:
+    \[
+    \sum_{j=1}^5 x_{ij} \leq 2 \quad \forall i = 2,3,4
+    \]
+
+    \item P3 no puede impartir A1 ni A2:
+    \[
+    x_{31} = 0, \quad x_{32} = 0
+    \]
+
+    \item Variables binarias:
+    \[
+    x_{ij} \in \{0,1\}
+    \]
+    \end{itemize}
+
+    \subsection{Solución}
+    \begin{center}
+    \includegraphics[width=0.6\textwidth]{fotos/mo_soleje9.png}
+    \end{center}
+
+    Resolviendo con programación lineal entera, se obtiene la siguiente asignación óptima:
+
+    \begin{center}
+    \begin{tabular}{cc}
+    \toprule
+    Asignatura & Profesor Asignado \\
+    \midrule
+    A1 & P1 \\
+    A2 & P2 \\
+    A3 & P2 \\
+    A4 & P4 \\
+    A5 & P4 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+
+    Valoración total máxima: \textbf{17.2}
+
+    \subsection{Conclusión}
+
+    La asignación óptima permite maximizar la valoración global respetando las restricciones del reglamento y de capacidad docente. Este tipo de modelado es muy útil en decisiones de planificación escolar.
+
+
+
+
+    \newpage
+    \section{Ejercicio 10: Prog Lineal Compras e Inventarios}
+
+    \subsection{Planteamiento del problema}
+    Jack Biensaulk está encargado de comprar artículos enlatados para el servicio de alimentos de una universidad. Conoce la demanda mensual durante el año académico y los precios de compra. Puede adelantar compras para evitar alzas de precios, pero eso implica un costo de inventario de \$0.20 por caja al final de cada mes. No puede comprar más de 1500 cajas por mes. El objetivo es minimizar el costo total (compra e inventario).
+
+    \subsection{Función Objetivo}
+    Minimizar el costo total de compras e inventario:
+
+    \[
+    \min Z = \sum_{i=1}^{9} (Costo_i \cdot X_i + 0.2 \cdot Y_i)
+    \]
+
+    Donde:
+    \begin{itemize}
+    \item \(X_i\): Cajas compradas en el mes \(i\)
+    \item \(Y_i\): Cajas almacenadas al final del mes \(i\)
+    \end{itemize}
+
+    \subsection{Restricciones}
+
+    \begin{itemize}
+    \item Capacidad máxima de compra mensual:
+        \[
+        X_i \leq 1500 \quad \forall i = 1,\ldots,9
+        \]
+
+    \item Balance de inventario:
+    \begin{align*}
+        Y_1 &= X_1 - Demanda_1 \\
+        Y_i &= Y_{i-1} + X_i - Demanda_i \quad \forall i = 2,\ldots,9
+    \end{align*}
+
+    \item No negatividad:
+    \[
+    X_i \geq 0, \quad Y_i \geq 0
+    \]
+    \end{itemize}
+
+    \subsection{Solución}
+    \begin{center}
+    \includegraphics[width=0.6\textwidth]{fotos/mo_soleje10.png}
+    \end{center}
+
+    Luego de aplicar un modelo de programación lineal con software de optimización, se obtiene la siguiente solución óptima:
+
+    \begin{center}
+    \begin{tabular}{cccc}
+    \toprule
+    Mes & \(X_i\) (Compras) & \(Y_i\) (Inventario final)\\
+    \midrule
+    1 & 1500 & 500 \\
+    2 & 1500 & 1100 \\
+    3 & 1500  & 1750 \\
+    4 & 0 & 1250 \\
+    5 & 1350  & 1600  \\
+    6 & 1500 & 2500 \\
+    7 & 0 & 1500 \\
+    8 & 0  & 1000 \\
+    9 & 0 & 0 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+
+    Costo total aproximado: \textbf{\$15,209.00}
+
+    \subsection{Conclusión}
+    La estrategia óptima consiste en adelantar compras cuando los precios son más bajos y manejar adecuadamente el inventario para satisfacer la demanda futura, manteniéndose dentro del límite de compra mensual y minimizando el costo total del sistema.
+
+\chapter{FUNCIONES MATEMÁTICAS}
+
+\section{Definición de Función}
+
+\begin{definicion}
+Una \textbf{función} es una relación entre dos conjuntos, llamados dominio y codominio, que asigna a cada elemento del dominio exactamente un elemento del codominio.
+
+Formalmente, una función $f: A \rightarrow B$ es una regla que asocia a cada elemento $x \in A$ un único elemento $y \in B$, denotado como $y = f(x)$.
+\end{definicion}
+
+\subsection{Elementos de una Función}
+
+\begin{itemize}
+    \item \textbf{Dominio ($Dom(f)$)}: Conjunto de todos los valores de entrada para los cuales la función está definida.
+    \item \textbf{Codominio}: Conjunto al cual pertenecen todos los posibles valores de salida.
+    \item \textbf{Rango o Imagen ($Im(f)$)}: Conjunto de todos los valores de salida que efectivamente toma la función.
+    \item \textbf{Variable independiente}: La variable de entrada, usualmente denotada como $x$.
+    \item \textbf{Variable dependiente}: La variable de salida, usualmente denotada como $y$ o $f(x)$.
+\end{itemize}
+
+\subsection{Notación y Representación}
+
+Las funciones pueden representarse de diversas formas:
+
+\subsection{Notación Algebraica}
+$f(x) = x^2 + 2x - 1$
+
+\subsection{Notación por Conjuntos}
+$f = \{(x,y) \in \mathbb{R} \times \mathbb{R} : y = x^2 + 2x - 1\}$
+
+\subsection{Tabla de Valores}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+$x$ & $f(x)$ \\
+\hline
+-2 & -1 \\
+-1 & -2 \\
+0 & -1 \\
+1 & 2 \\
+2 & 7 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Clasificación de Funciones}
+
+\subsection{Según su Forma Algebraica}
+
+\subsection{Funciones Polinómicas}
+
+\begin{definicion}
+Una función polinómica es de la forma:
+$f(x) = a_n x^n + a_{n-1} x^{n-1} + \cdots + a_1 x + a_0$
+donde $a_i \in \mathbb{R}$ para $i = 0, 1, 2, \ldots, n$ y $a_n \neq 0$.
+\end{definicion}
+
+\subsubsection{Función Constante}
+$f(x) = c \text{ donde } c \in \mathbb{R}$
+
+\subsubsection{Función Lineal}
+$f(x) = mx + b \text{ donde } m, b \in \mathbb{R} \text{ y } m \neq 0$
+
+\subsubsection{Función Cuadrática}
+$f(x) = ax^2 + bx + c \text{ donde } a, b, c \in \mathbb{R} \text{ y } a \neq 0$
+
+\subsection{Funciones Racionales}
+
+\begin{definicion}
+Una función racional es el cociente de dos polinomios:
+$f(x) = \frac{P(x)}{Q(x)}$
+donde $P(x)$ y $Q(x)$ son polinomios y $Q(x) \neq 0$.
+\end{definicion}
+
+\subsection{Funciones Irracionales}
+
+\begin{definicion}
+Una función irracional contiene la variable independiente bajo un radical:
+$f(x) = \sqrt[n]{g(x)}$
+donde $g(x)$ es una expresión algebraica.
+\end{definicion}
+
+\subsection{Funciones Trascendentes}
+
+\subsubsection{Funciones Exponenciales}
+$f(x) = a^x \text{ donde } a > 0 \text{ y } a \neq 1$
+
+\subsubsection{Funciones Logarítmicas}
+$f(x) = \log_a(x) \text{ donde } a > 0, a \neq 1 \text{ y } x > 0$
+
+\subsubsection{Funciones Trigonométricas}
+\begin{align}
+f(x) &= \sin(x) \\
+f(x) &= \cos(x) \\
+f(x) &= \tan(x)
+\end{align}
+
+\subsection{Según sus Propiedades}
+
+\subsubsection{Funciones Inyectivas (Uno a Uno)}
+
+\begin{definicion}
+Una función $f: A \rightarrow B$ es inyectiva si:
+$\forall x_1, x_2 \in A: x_1 \neq x_2 \Rightarrow f(x_1) \neq f(x_2)$
+\end{definicion}
+
+\subsubsection{Funciones Sobreyectivas (Sobre)}
+
+\begin{definicion}
+Una función $f: A \rightarrow B$ es sobreyectiva si:
+$\forall y \in B, \exists x \in A \text{ tal que } f(x) = y$
+\end{definicion}
+
+\subsubsection{Funciones Biyectivas}
+
+\begin{definicion}
+Una función es biyectiva si es tanto inyectiva como sobreyectiva.
+\end{definicion}
+
+\subsubsection{Funciones Pares e Impares}
+
+\begin{definicion}
+\begin{itemize}
+    \item Una función $f$ es \textbf{par} si $f(-x) = f(x)$ para todo $x$ en el dominio.
+    \item Una función $f$ es \textbf{impar} si $f(-x) = -f(x)$ para todo $x$ en el dominio.
+\end{itemize}
+\end{definicion}
+
+\subsubsection{Funciones Crecientes y Decrecientes}
+
+\begin{definicion}
+Sea $f$ una función definida en un intervalo $I$:
+\begin{itemize}
+    \item $f$ es \textbf{creciente} en $I$ si $x_1 < x_2 \Rightarrow f(x_1) \leq f(x_2)$
+    \item $f$ es \textbf{estrictamente creciente} en $I$ si $x_1 < x_2 \Rightarrow f(x_1) < f(x_2)$
+    \item $f$ es \textbf{decreciente} en $I$ si $x_1 < x_2 \Rightarrow f(x_1) \geq f(x_2)$
+    \item $f$ es \textbf{estrictamente decreciente} en $I$ si $x_1 < x_2 \Rightarrow f(x_1) > f(x_2)$
+\end{itemize}
+\end{definicion}
+
+\subsection{Operaciones con Funciones}
+
+\subsection{Operaciones Algebraicas}
+
+Sean $f$ y $g$ dos funciones con dominios $D_f$ y $D_g$ respectivamente.
+
+\subsubsection{Suma de Funciones}
+$(f + g)(x) = f(x) + g(x)$
+Dominio: $D_{f+g} = D_f \cap D_g$
+
+\subsubsection{Resta de Funciones}
+$(f - g)(x) = f(x) - g(x)$
+Dominio: $D_{f-g} = D_f \cap D_g$
+
+\subsubsection{Producto de Funciones}
+$(f \cdot g)(x) = f(x) \cdot g(x)$
+Dominio: $D_{f \cdot g} = D_f \cap D_g$
+
+\subsubsection{Cociente de Funciones}
+$\left(\frac{f}{g}\right)(x) = \frac{f(x)}{g(x)}$
+Dominio: $D_{f/g} = \{x \in D_f \cap D_g : g(x) \neq 0\}$
+
+\subsection{Composición de Funciones}
+
+\begin{definicion}
+La composición de dos funciones $f$ y $g$, denotada como $(f \circ g)(x)$, se define como:
+$(f \circ g)(x) = f(g(x))$
+\end{definicion}
+
+El dominio de $f \circ g$ es:
+$D_{f \circ g} = \{x \in D_g : g(x) \in D_f\}$
+
+\subsubsection{Propiedades de la Composición}
+
+\begin{proposicion}
+La composición de funciones es asociativa:
+$(f \circ g) \circ h = f \circ (g \circ h)$
+\end{proposicion}
+
+\begin{proposicion}
+La composición de funciones no es conmutativa en general:
+$f \circ g \neq g \circ f$
+\end{proposicion}
+
+\subsection{Función Inversa}
+
+\begin{definicion}
+Sea $f: A \rightarrow B$ una función biyectiva. La función inversa de $f$, denotada como $f^{-1}: B \rightarrow A$, se define como:
+$f^{-1}(y) = x \Leftrightarrow f(x) = y$
+\end{definicion}
+
+\subsubsection{Propiedades de la Función Inversa}
+
+\begin{proposicion}
+Si $f$ tiene inversa, entonces:
+\begin{enumerate}
+    \item $(f^{-1})^{-1} = f$
+    \item $f \circ f^{-1} = I_B$ (función identidad en $B$)
+    \item $f^{-1} \circ f = I_A$ (función identidad en $A$)
+\end{enumerate}
+\end{proposicion}
+
+\subsection{Límites y Continuidad}
+
+\subsection{Concepto de Límite}
+
+\begin{definicion}
+El límite de una función $f(x)$ cuando $x$ tiende a $a$ es $L$, denotado como:
+$\lim_{x \to a} f(x) = L$
+si para todo $\varepsilon > 0$, existe un $\delta > 0$ tal que:
+$0 < |x - a| < \delta \Rightarrow |f(x) - L| < \varepsilon$
+\end{definicion}
+
+\subsubsection{Propiedades de los Límites}
+
+Si $\lim_{x \to a} f(x) = L$ y $\lim_{x \to a} g(x) = M$, entonces:
+
+\begin{enumerate}
+    \item $\lim_{x \to a} [f(x) + g(x)] = L + M$
+    \item $\lim_{x \to a} [f(x) - g(x)] = L - M$
+    \item $\lim_{x \to a} [f(x) \cdot g(x)] = L \cdot M$
+    \item $\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L}{M}$ (si $M \neq 0$)
+    \item $\lim_{x \to a} [c \cdot f(x)] = c \cdot L$ (donde $c$ es constante)
+\end{enumerate}
+
+\subsection{Continuidad}
+
+\begin{definicion}
+Una función $f$ es continua en $x = a$ si:
+\begin{enumerate}
+    \item $f(a)$ está definida
+    \item $\lim_{x \to a} f(x)$ existe
+    \item $\lim_{x \to a} f(x) = f(a)$
+\end{enumerate}
+\end{definicion}
+
+\subsubsection{Tipos de Discontinuidades}
+
+\begin{enumerate}
+    \item \textbf{Discontinuidad evitable}: El límite existe pero no es igual al valor de la función en ese punto.
+    \item \textbf{Discontinuidad de salto}: Los límites laterales existen pero son diferentes.
+    \item \textbf{Discontinuidad esencial}: Al menos uno de los límites laterales no existe.
+\end{enumerate}
+
+\subsection{Derivadas de Funciones}
+
+\subsection{Definición de Derivada}
+
+\begin{definicion}
+La derivada de una función $f$ en el punto $x = a$ se define como:
+$f'(a) = \lim_{h \to 0} \frac{f(a + h) - f(a)}{h}$
+siempre que este límite exista.
+\end{definicion}
+
+\subsubsection{Interpretación Geométrica}
+
+La derivada de una función en un punto representa la pendiente de la recta tangente a la curva en ese punto.
+
+\subsubsection{Interpretación Física}
+
+En el contexto físico, la derivada representa la tasa instantánea de cambio de una cantidad con respecto a otra.
+
+\subsection{Reglas de Derivación}
+
+\subsubsection{Reglas Básicas}
+
+\begin{enumerate}
+    \item \textbf{Regla de la constante}: $\frac{d}{dx}[c] = 0$
+    \item \textbf{Regla de la potencia}: $\frac{d}{dx}[x^n] = nx^{n-1}$
+    \item \textbf{Regla del múltiplo constante}: $\frac{d}{dx}[cf(x)] = c \cdot f'(x)$
+    \item \textbf{Regla de la suma}: $\frac{d}{dx}[f(x) + g(x)] = f'(x) + g'(x)$
+    \item \textbf{Regla del producto}: $\frac{d}{dx}[f(x) \cdot g(x)] = f'(x) \cdot g(x) + f(x) \cdot g'(x)$
+    \item \textbf{Regla del cociente}: $\frac{d}{dx}\left[\frac{f(x)}{g(x)}\right] = \frac{f'(x) \cdot g(x) - f(x) \cdot g'(x)}{[g(x)]^2}$
+\end{enumerate}
+
+\subsubsection{Regla de la Cadena}
+
+\begin{teorema}
+Si $y = f(u)$ y $u = g(x)$, entonces:
+$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx} = f'(u) \cdot g'(x) = f'(g(x)) \cdot g'(x)$
+\end{teorema}
+
+\subsection{Derivadas de Funciones Especiales}
+
+\subsubsection{Funciones Trigonométricas}
+\begin{align}
+\frac{d}{dx}[\sin x] &= \cos x \\
+\frac{d}{dx}[\cos x] &= -\sin x \\
+\frac{d}{dx}[\tan x] &= \sec^2 x
+\end{align}
+
+\subsection{Funciones Exponenciales y Logarítmicas}
+\begin{align}
+\frac{d}{dx}[e^x] &= e^x \\
+\frac{d}{dx}[a^x] &= a^x \ln a \\
+\frac{d}{dx}[\ln x] &= \frac{1}{x} \\
+\frac{d}{dx}[\log_a x] &= \frac{1}{x \ln a}
+\end{align}
+
+\subsection{Integrales de Funciones}
+
+\subsection{Integral Indefinida}
+
+\begin{definicion}
+La integral indefinida de una función $f(x)$ es una función $F(x)$ tal que $F'(x) = f(x)$. Se denota como:
+$\int f(x) \, dx = F(x) + C$
+donde $C$ es la constante de integración.
+\end{definicion}
+
+\subsubsection{Propiedades de la Integral Indefinida}
+
+\begin{enumerate}
+    \item $\int [f(x) + g(x)] \, dx = \int f(x) \, dx + \int g(x) \, dx$
+    \item $\int c \cdot f(x) \, dx = c \int f(x) \, dx$
+    \item $\int x^n \, dx = \frac{x^{n+1}}{n+1} + C$ (para $n \neq -1$)
+    \item $\int \frac{1}{x} \, dx = \ln|x| + C$
+    \item $\int e^x \, dx = e^x + C$
+\end{enumerate}
+
+\subsection{Integral Definida}
+
+\begin{definicion}
+La integral definida de una función $f(x)$ desde $x = a$ hasta $x = b$ se define como:
+$\int_a^b f(x) \, dx = \lim_{n \to \infty} \sum_{i=1}^n f(x_i) \Delta x$
+donde $\Delta x = \frac{b-a}{n}$ y $x_i = a + i \cdot \Delta x$.
+\end{definicion}
+
+\subsubsection{Teorema Fundamental del Cálculo}
+
+\begin{teorema}
+Si $f$ es continua en $[a,b]$ y $F$ es una antiderivada de $f$, entonces:
+$\int_a^b f(x) \, dx = F(b) - F(a)$
+\end{teorema}
+
+\section{Ejercicios Resueltos}
+
+\begin{ejercicio}
+\textbf{Ejercicio 1: Optimización de Costos de Producción}
+
+Una empresa fabrica cajas de cartón. El costo de producción $C(x)$ en dólares para fabricar $x$ cajas está dado por:
+$$C(x) = 0.003x^3 - 0.6x^2 + 50x + 1000$$
+
+donde $x$ es el número de cajas (en cientos). Encontrar:
+\begin{enumerate}[label=\alph*)]
+    \item El número de cajas que minimiza el costo promedio por caja
+    \item El costo mínimo promedio
+    \item Los intervalos donde el costo marginal es creciente o decreciente
+\end{enumerate}
+\end{ejercicio}
+
+\textbf{Solución:}
+
+a) \textbf{Minimizar el costo promedio:}
+
+El costo promedio por caja es:
+$$CP(x) = \frac{C(x)}{x} = \frac{0.003x^3 - 0.6x^2 + 50x + 1000}{x} = 0.003x^2 - 0.6x + 50 + \frac{1000}{x}$$
+
+Para minimizar, derivamos e igualamos a cero:
+\begin{align*}
+CP'(x) &= 0.006x - 0.6 - \frac{1000}{x^2} = 0 \\
+0.006x - 0.6 &= \frac{1000}{x^2} \\
+0.006x^3 - 0.6x^2 &= 1000 \\
+x^3 - 100x^2 - 166,667 &= 0
+\end{align*}
+
+Resolviendo numéricamente: $x \approx 115.47$
+
+Por lo tanto, se deben producir aproximadamente \textbf{11,547 cajas} (115.47 cientos).
+
+b) \textbf{Costo mínimo promedio:}
+
+Evaluando en $x = 115.47$:
+$$CP(115.47) = 0.003(115.47)^2 - 0.6(115.47) + 50 + \frac{1000}{115.47} \approx \$28.66 \text{ por caja}$$
+
+c) \textbf{Intervalos del costo marginal:}
+
+El costo marginal es:
+$$CM(x) = C'(x) = 0.009x^2 - 1.2x + 50$$
+
+Para ver dónde es creciente o decreciente:
+$$CM'(x) = 0.018x - 1.2 = 0 \Rightarrow x = 66.67$$
+
+- Para $x < 66.67$: $CM'(x) < 0$, el costo marginal es decreciente
+- Para $x > 66.67$: $CM'(x) > 0$, el costo marginal es creciente
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio1fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 2: Optimización de Ingresos en Precio}
+
+Una tienda vende laptops. La demanda mensual $q$ (en unidades) está relacionada con el precio $p$ (en dólares) mediante:
+$$q = 500 - 0.4p$$
+
+El costo de cada laptop para la tienda es \$600. Determinar:
+\begin{enumerate}[label=\alph*)]
+    \item El precio que maximiza el ingreso total
+    \item El precio que maximiza la utilidad
+    \item La elasticidad de la demanda en el precio óptimo
+\end{enumerate}
+\end{ejercicio}
+
+\textbf{Solución:}
+
+a) \textbf{Maximizar el ingreso total:}
+
+El ingreso total es:
+$$I(p) = p \cdot q = p(500 - 0.4p) = 500p - 0.4p^2$$
+
+Derivando e igualando a cero:
+$$I'(p) = 500 - 0.8p = 0 \Rightarrow p = 625$$
+
+El precio que maximiza el ingreso es \textbf{\$625}.
+
+b) \textbf{Maximizar la utilidad:}
+
+La utilidad es:
+$$U(p) = (p - 600) \cdot q = (p - 600)(500 - 0.4p)$$
+$$U(p) = 500p - 0.4p^2 - 300,000 + 240p = -0.4p^2 + 740p - 300,000$$
+
+Derivando:
+$$U'(p) = -0.8p + 740 = 0 \Rightarrow p = 925$$
+
+El precio que maximiza la utilidad es \textbf{\$925}.
+
+c) \textbf{Elasticidad de la demanda:}
+
+La elasticidad en el precio óptimo de utilidad ($p = 925$):
+$$\varepsilon = -\frac{dq}{dp} \cdot \frac{p}{q} = -(-0.4) \cdot \frac{925}{500 - 0.4(925)} = 0.4 \cdot \frac{925}{130} \approx 2.85$$
+
+La demanda es \textbf{elástica} (mayor que 1).
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio2fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 3: Optimización de Envases Cilíndricos}
+
+Una empresa debe diseñar latas cilíndricas de 355 ml (355 cm³). El costo del material es \$0.02 por cm² para las tapas (superior e inferior) y \$0.01 por cm² para el lateral. Encontrar las dimensiones que minimizan el costo del material.
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Sea $r$ el radio y $h$ la altura del cilindro.
+
+Restricción de volumen:
+$$V = \pi r^2 h = 355 \Rightarrow h = \frac{355}{\pi r^2}$$
+
+Costo total del material:
+\begin{align*}
+C(r) &= 0.02 \cdot 2\pi r^2 + 0.01 \cdot 2\pi rh \\
+&= 0.04\pi r^2 + 0.02\pi r \cdot \frac{355}{\pi r^2} \\
+&= 0.04\pi r^2 + \frac{7.1}{r}
+\end{align*}
+
+Derivando e igualando a cero:
+$$C'(r) = 0.08\pi r - \frac{7.1}{r^2} = 0$$
+
+$$0.08\pi r^3 = 7.1$$
+
+$$r^3 = \frac{7.1}{0.08\pi} \approx 28.25$$
+
+$$r \approx 3.05 \text{ cm}$$
+
+La altura correspondiente:
+$$h = \frac{355}{\pi (3.05)^2} \approx 12.14 \text{ cm}$$
+
+\textbf{Respuesta:} Radio óptimo = 3.05 cm, Altura óptima = 12.14 cm
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio3fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 4: Optimización de Rutas de Entrega}
+
+Un camión de entregas debe ir desde un almacén A hasta un cliente C, pero debe pasar por un punto B en una carretera perpendicular. El almacén A está a 10 km al oeste de la carretera, y el cliente C está a 15 km al este de la carretera y 30 km al norte del punto más cercano a A. Si el costo de transporte es \$2 por km, ¿dónde debe ubicarse el punto B para minimizar el costo total?
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Establecemos un sistema de coordenadas:
+- A en (-10, 0)
+- C en (15, 30)
+- B en (0, y) donde $y$ es lo que queremos optimizar
+
+La distancia total es:
+$$D(y) = \sqrt{10^2 + y^2} + \sqrt{15^2 + (30-y)^2}$$
+
+El costo total es:
+$$C(y) = 2D(y) = 2[\sqrt{100 + y^2} + \sqrt{225 + (30-y)^2}]$$
+
+Derivando:
+$$C'(y) = 2\left[\frac{y}{\sqrt{100 + y^2}} - \frac{30-y}{\sqrt{225 + (30-y)^2}}\right] = 0$$
+
+Esto implica:
+$$\frac{y}{\sqrt{100 + y^2}} = \frac{30-y}{\sqrt{225 + (30-y)^2}}$$
+
+Resolviendo (elevando al cuadrado y simplificando):
+$$\frac{y^2}{100 + y^2} = \frac{(30-y)^2}{225 + (30-y)^2}$$
+
+Después de algebra:
+$$y = 12 \text{ km}$$
+
+\textbf{Respuesta:} El punto B debe estar a 12 km al norte del punto más cercano a A.
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio4fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 5: Optimización de Inventario (Modelo EOQ)}
+
+Una empresa vende 10,000 unidades al año de un producto. El costo de ordenar es \$50 por pedido y el costo de mantener inventario es \$4 por unidad por año. Determinar:
+\begin{enumerate}[label=\alph*)]
+    \item La cantidad económica de pedido (EOQ)
+    \item El número óptimo de pedidos al año
+    \item El costo total anual mínimo
+\end{enumerate}
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Datos:
+- D = 10,000 unidades/año (demanda anual)
+- S = \$50 por pedido (costo de ordenar)
+- H = \$4 por unidad/año (costo de mantener)
+
+a) \textbf{Cantidad económica de pedido (EOQ):}
+
+La función de costo total anual es:
+$$CT(Q) = \frac{D}{Q} \cdot S + \frac{Q}{2} \cdot H = \frac{10,000 \cdot 50}{Q} + \frac{Q \cdot 4}{2} = \frac{500,000}{Q} + 2Q$$
+
+Derivando e igualando a cero:
+$$CT'(Q) = -\frac{500,000}{Q^2} + 2 = 0$$
+
+$$Q^2 = \frac{500,000}{2} = 250,000$$
+
+$$Q = 500 \text{ unidades}$$
+
+b) \textbf{Número óptimo de pedidos:}
+$$N = \frac{D}{Q} = \frac{10,000}{500} = 20 \text{ pedidos/año}$$
+
+c) \textbf{Costo total mínimo:}
+$$CT(500) = \frac{500,000}{500} + 2(500) = 1,000 + 1,000 = \$2,000 \text{ por año}$$
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio5fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 6: Optimización de Publicidad}
+
+Una empresa ha determinado que sus ventas $S$ (en miles de dólares) están relacionadas con el gasto en publicidad $x$ (en miles de dólares) mediante:
+$$S(x) = 200 + 30x - 0.5x^2$$
+
+Si el margen de utilidad es del 25\% sobre las ventas, determinar:
+\begin{enumerate}[label=\alph*)]
+    \item El gasto en publicidad que maximiza la utilidad neta
+    \item La utilidad neta máxima
+\end{enumerate}
+\end{ejercicio}
+
+\textbf{Solución:}
+
+a) \textbf{Maximizar utilidad neta:}
+
+La utilidad bruta es el 25\% de las ventas:
+$$UB(x) = 0.25 \cdot S(x) = 0.25(200 + 30x - 0.5x^2) = 50 + 7.5x - 0.125x^2$$
+
+La utilidad neta es la utilidad bruta menos el gasto en publicidad:
+$$UN(x) = UB(x) - x = 50 + 7.5x - 0.125x^2 - x = 50 + 6.5x - 0.125x^2$$
+
+Derivando e igualando a cero:
+$$UN'(x) = 6.5 - 0.25x = 0$$
+$$x = 26$$
+
+b) \textbf{Utilidad neta máxima:}
+$$UN(26) = 50 + 6.5(26) - 0.125(26)^2 = 50 + 169 - 84.5 = \$134,500$$
+
+\textbf{Respuesta:} 
+- Gasto óptimo en publicidad: \$26,000
+- Utilidad neta máxima: \$134,500
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio6fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 7: Optimización de Producción con Restricciones}
+
+Una fábrica produce dos tipos de productos: A y B. La utilidad por unidad es \$40 para A y \$30 para B. Las restricciones de producción son:
+- Máximo 100 horas de mano de obra disponibles
+- El producto A requiere 2 horas por unidad
+- El producto B requiere 1 hora por unidad
+- La demanda máxima de A es 40 unidades
+
+Si $x$ es la cantidad de A y $y$ la cantidad de B, optimizar la producción usando multiplicadores de Lagrange.
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Función objetivo: $U(x,y) = 40x + 30y$
+
+Restricción activa: $2x + y = 100$ (asumimos que se usan todas las horas)
+
+Además: $0 \leq x \leq 40$
+
+Usando multiplicadores de Lagrange:
+$$\mathcal{L}(x,y,\lambda) = 40x + 30y - \lambda(2x + y - 100)$$
+
+Derivadas parciales:
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial x} &= 40 - 2\lambda = 0 \Rightarrow \lambda = 20 \\
+\frac{\partial \mathcal{L}}{\partial y} &= 30 - \lambda = 0 \Rightarrow \lambda = 30
+\end{align*}
+
+Hay una contradicción, lo que significa que la solución está en una frontera.
+
+Analizando los casos extremos:
+- Si $x = 40$: $y = 100 - 2(40) = 20$, $U = 40(40) + 30(20) = 2,200$
+- Si $x = 0$: $y = 100$, $U = 30(100) = 3,000$
+
+Como no hay restricción superior para $y$, y la utilidad por hora es mayor para B (\$30/hora) que para A (\$20/hora), la solución óptima es:
+- Producir 0 unidades de A
+- Producir 100 unidades de B
+- Utilidad máxima: \$3,000
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio7fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 8: Optimización de Portafolio de Inversión}
+
+Un inversionista tiene \$100,000 para invertir en dos activos. El activo A tiene un retorno esperado del 8\% con una desviación estándar del 12\%. El activo B tiene un retorno esperado del 5\% con una desviación estándar del 8\%. La correlación entre los activos es 0.3. Encontrar la proporción óptima que minimiza el riesgo para un retorno objetivo del 6.5\%.
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Sea $w$ la proporción invertida en A, entonces $(1-w)$ se invierte en B.
+
+Retorno esperado del portafolio:
+$$R_p = 0.08w + 0.05(1-w) = 0.05 + 0.03w$$
+
+Para un retorno del 6.5\%:
+$$0.065 = 0.05 + 0.03w \Rightarrow w = 0.5$$
+
+Verificamos el riesgo del portafolio:
+$$\sigma_p^2 = w^2\sigma_A^2 + (1-w)^2\sigma_B^2 + 2w(1-w)\rho\sigma_A\sigma_B$$
+
+Con $w = 0.5$:
+\begin{align*}
+\sigma_p^2 &= (0.5)^2(0.12)^2 + (0.5)^2(0.08)^2 + 2(0.5)(0.5)(0.3)(0.12)(0.08) \\
+&= 0.0036 + 0.0016 + 0.00072 \\
+&= 0.00592
+\end{align*}
+
+$$\sigma_p = \sqrt{0.00592} \approx 0.077 = 7.7\%$$
+
+\textbf{Respuesta:}
+- Invertir 50\% en activo A y 50\% en activo B
+- Riesgo del portafolio: 7.7\%
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio8fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 9: Optimización de Red de Distribución}
+
+Una empresa tiene 3 plantas de producción y debe abastecer a 4 centros de distribución. Los costos de transporte por unidad son:
+
+\begin{center}
+\begin{tabular}{|c|cccc|}
+\hline
+Planta/Centro & CD1 & CD2 & CD3 & CD4 \\
+\hline
+P1 & 8 & 6 & 10 & 9 \\
+P2 & 9 & 12 & 13 & 7 \\
+P3 & 14 & 9 & 16 & 5 \\
+\hline
+\end{tabular}
+\end{center}
+
+Capacidades: P1=35, P2=50, P3=40 unidades
+Demandas: CD1=45, CD2=20, CD3=30, CD4=30 unidades
+
+Encontrar el plan de distribución que minimiza el costo total.
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Este es un problema de transporte. Usando el método de la esquina noroeste y luego optimizando:
+
+Solución óptima:
+- P1 → CD2: 20 unidades
+- P1 → CD1: 15 unidades  
+- P2 → CD1: 30 unidades
+- P2 → CD4: 20 unidades
+- P3 → CD3: 30 unidades
+- P3 → CD4: 10 unidades
+
+Costo total mínimo:
+$$C = 20(6) + 15(8) + 30(9) + 20(7) + 30(16) + 10(5) = 120 + 120 + 270 + 140 + 480 + 50 = \$1,180$$
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio9fm.png}
+\end{center}
+
+\begin{ejercicio}
+\textbf{Ejercicio 10: Optimización de Tiempo de Proyecto}
+
+Un proyecto tiene actividades con duraciones normales y costos de aceleración:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Actividad & Duración Normal & Duración Mínima & Costo por día reducido \\
+\hline
+A & 10 días & 6 días & \$200 \\
+B & 8 días & 5 días & \$300 \\
+C & 12 días & 8 días & \$250 \\
+\hline
+\end{tabular}
+\end{center}
+
+Si las actividades son secuenciales (A→B→C) y hay una penalización de \$500 por cada día después del día 25, determinar el cronograma óptimo.
+\end{ejercicio}
+
+\textbf{Solución:}
+
+Duración normal del proyecto: 10 + 8 + 12 = 30 días
+Penalización si no se acelera: 5 días × \$500 = \$2,500
+
+Analizamos las opciones de aceleración:
+
+1. Reducir A en 4 días: Costo = 4 × \$200 = \$800
+2. Reducir B en 3 días: Costo = 3 × \$300 = \$900
+3. Reducir C en 4 días: Costo = 4 × \$250 = \$1,000
+
+Para llegar a 25 días, necesitamos reducir 5 días totales.
+
+Opciones:
+- Reducir A(4) + B(1): \$800 + \$300 = \$1,100
+- Reducir A(4) + C(1): \$800 + \$250 = \$1,050
+- Reducir B(3) + C(2): \$900 + \$500 = \$1,400
+- Reducir A(1) + C(4): \$200 + \$1,000 = \$1,200
+
+La opción óptima es reducir A en 4 días y C en 1 día.
+
+\textbf{Cronograma óptimo:}
+- Actividad A: 6 días
+- Actividad B: 8 días  
+- Actividad C: 11 días
+- Duración total: 25 días
+- Costo de aceleración: \$1,050
+
+\textbf{Verificación con Julia:}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{ejercicio10fm.png}
+\end{center}
+
+\section{Conclusiones}
+
+En este capítulo hemos explorado cómo las funciones matemáticas son herramientas fundamentales para resolver problemas de optimización en contextos reales. Los ejercicios resueltos demuestran aplicaciones prácticas en:
+
+\begin{itemize}
+    \item \textbf{Optimización de costos}: Minimización de costos de producción, inventario y distribución
+    \item \textbf{Maximización de utilidades}: Determinación de precios óptimos y niveles de producción
+    \item \textbf{Diseño óptimo}: Dimensionamiento de envases y estructuras para minimizar materiales
+    \item \textbf{Gestión de recursos}: Asignación eficiente de recursos limitados
+    \item \textbf{Análisis financiero}: Optimización de portafolios de inversión
+    \item \textbf{Logística}: Rutas y redes de distribución óptimas
+\end{itemize}
+
+El uso del cálculo diferencial (derivadas) es esencial para encontrar máximos y mínimos en problemas de optimización. La verificación con Julia permite validar los resultados analíticos y visualizar las soluciones, proporcionando una herramienta poderosa para el análisis numérico en problemas complejos de optimización.
+
+
+    \begin{thebibliography}{99}
+    \bibitem{repo} 
+    Jefry Erick Quispe Ramos. (2025). 
+    \textit{Recursos computacionales para programación matemática}. 
+    Repositorio GitHub. 
+    \url{https://github.com/JefryErick/Metodos-de-Optimizacion/tree/main/2_Unidad/MO_libro} 
+    \bibitem{repo} 
+    Nestor Ademir Ruelas Yana. (2025). 
+    \textit{Recursos computacionales para Funciones Matematicas}. 
+    Repositorio GitHub. 
+    \url{https://github.com/123ademir/metodos_de_optimizacion/tree/main/LIBRO%20M%C3%89TODOS%20DE%20OPTIMIZACI%C3%93N} 
+    \end{thebibliography}
+    \end{document}
